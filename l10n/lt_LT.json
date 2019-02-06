@@ -10,6 +10,7 @@
     "Your Nextcloud team" : "Jūsų Nextcloud komanda",
     "Your Nextcloud server Subscription is expired" : "Pasibaigė jūsų Nextcloud prenumeratos galiojimo laikas",
     "Your Nextcloud server Subscription is expired!" : "Pasibaigė jūsų Nextcloud serverio prenumeratos galiojimo laikas!",
+    "Support" : "Palaikymas",
     "Subscription key:" : "Prenumeratos raktas:",
     "_Expires in %n year_::_Expires in %n years_" : ["Baigia galioti po %n metų","Baigia galioti po %n metų","Baigia galioti po %n metų","Baigia galioti po %n metų"],
     "_Expires in %n month_::_Expires in %n months_" : ["Baigia galioti po %n mėnesio","Baigia galioti po %n mėnesių","Baigia galioti po %n mėnesių","Baigia galioti po %n mėnesio"],

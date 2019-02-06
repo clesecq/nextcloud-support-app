@@ -458,24 +458,21 @@ class SubscriptionService {
 
 		$emailTemplate->setSubject($l->t('Your server has no Nextcloud Subscription'));
 		$emailTemplate->addHeader();
-		$emailTemplate->addHeading($l->t('Your server has no Nextcloud Subscription'));
-		$text = $l->t('Your Nextcloud server is not backed by a Nextcloud Enterprise Subscription.');
-		$text2 = $l->t('A Nextcloud Support Subscription means the original developers behind your private cloud server are 100% dedicated to your success: the security, scalability, performance and functionality of your service!');
+		$emailTemplate->addHeading($l->t('Your Nextcloud server is not backed by a Nextcloud Enterprise Subscription.'));
+		$text = $l->t('A Nextcloud Enterprise Subscription means the original developers behind your self-hosted cloud server are 100% dedicated to your success: the security, scalability, performance and functionality of your service!');
 
-		$listItem1 = $l->t('If you encounter a problem and your server does no longer work, blocking employees from sharing or customers from downloading and uploading files, you don\'t have to rely on searching online and asking volunteers on forums and social media for a solution. You have direct access to our experienced engineers who help you track down and fix the problem.');
-		$listItem2 = $l->t('You have a contract with the vendor providing confidential security information, mitigations, patches and updates.');
-		$listItem3 = $l->t('If you want to skip a release or two and stay a bit longer on your current version without disruptions, you don\'t have to run software without security updates. We deliver them to you as long as is needed!');
-		$listItem4 = $l->t('If you have performance and scalability issues you have the best expertise at hand, instead of having to search on the web and hope you find a solution.');
-		$listItem5 = $l->t('If you are asked how the compliance of Nextcloud is and if you can deliver a data export under GDPR, HIPAA or other rules, you have access to the right documentation and can tap into our expertise to respond quickly and accurately.');
+		$listItem1 = $l->t('If your server setup breaks and employees can\'t work anymore, you don\'t have to rely on searching online forums for a solution. You have direct access to our experienced engineers!');
+		$listItem2 = $l->t('You have a contract with the vendor providing early security information, mitigations, patches and updates.');
+		$listItem3 = $l->t('If you need to stay longer on your current version without disruptions, you don\'t have to run software without security updates.');
+		$listItem4 = $l->t('You have the best expertise at hand to deal with performance and scalability issues.');
+		$listItem5 = $l->t('You have access to the right documentation and expertise to quickly answer compliance questions or deliver on GDPR, HIPAA and other regulation requirements.');
 
-		$text3 = $l->t('We can also provide you Outlook integration, Online Office, scalable integrated audio-video and chat communication an other features only available in a very limited form for free. And we can develop further integrations and capabilities you need.');
-		$text4 = $l->t('A subscription helps you get the most out of Nextcloud! Don\'t your users deserve the best?');
+		$text2 = $l->t('We can also provide Outlook integration, Online Office, scalable integrated audio-video and chat communication an other features only available in a limited form for free or develop further integrations and capabilities to you needs.');
+		$text3 = $l->t('A subscription helps you get the most out of Nextcloud!');
 
 		$emailTemplate->addBodyText(
-			htmlspecialchars($text) . '<br><br>' .
-				htmlspecialchars($text2),
-			$text . "\n\n" .
-				$text2
+			htmlspecialchars($text),
+			$text
 		);
 
 		$emailTemplate->addBodyListItem(htmlspecialchars($listItem1), '', '', $listItem1);
@@ -485,10 +482,10 @@ class SubscriptionService {
 		$emailTemplate->addBodyListItem(htmlspecialchars($listItem5), '', '', $listItem5);
 
 		$emailTemplate->addBodyText(
-			htmlspecialchars($text3) . '<br><br>' .
-			htmlspecialchars($text4),
-			$text3 . "\n\n" .
-			$text4
+			htmlspecialchars($text2) . '<br><br>' .
+			htmlspecialchars($text3),
+			$text2 . "\n\n" .
+			$text3
 		);
 
 		$emailTemplate->addBodyButton(
