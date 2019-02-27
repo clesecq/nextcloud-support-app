@@ -13,7 +13,6 @@ OC.L10N.register(
     "Commmunity support" : "Поддръжка от общността",
     "GitHub" : "GitHub",
     "News" : "Новини",
-    "Follow us on Google+" : "Следвайте ни в Google+",
     "Follow us on Twitter" : "Следвайте ни в Twitter",
     "Check out our blog" : "Посетете блога ни",
     "Subscribe to our newsletter" : "Абонирайте се за нашия имейл бюлетин"

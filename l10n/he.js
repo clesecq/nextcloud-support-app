@@ -19,7 +19,6 @@ OC.L10N.register(
     "Your Nextcloud team" : "צוות ה־Nextcloud שלך",
     "Your Nextcloud server Subscription is expired" : "תוקף מינוי שרת ה־Nextcloud שלך פג",
     "Your Nextcloud server Subscription is expired!" : "תוקף מינוי שרת ה־Nextcloud שלך פג!",
-    "Your Nextcloud Subscription has expired! Please contact you Nextcloud account manager to get your subscription updated!" : "תוקף מינוי ה־Nextcloud שלך פג! נא ליצור קשר עם מנהל ה־Nextcloud שלך כדי לעדכן את תוקף המינוי!",
     "Support" : "תמיכה",
     "Getting support and help for your Nextcloud" : "קבלת תמיכה ועזרה עבור ה־Nextcloud שלך",
     "Basic subscription" : "מינוי בסיסי",
@@ -52,7 +51,6 @@ OC.L10N.register(
     "Nextcloud at GitHub" : "Nextcloud ב־GitHub",
     "Subscription key" : "מפתח מינוי",
     "News" : "חדשות",
-    "Follow us on Google+" : "לעקוב אחרינו ב־Google+‎",
     "Follow us on Twitter" : "לעקוב אחרינו בטוויטר",
     "Check out our blog" : "לעיין בבלוג שלנו",
     "Subscribe to our newsletter" : "הרשמה לרשימת הדיוור שלנו"

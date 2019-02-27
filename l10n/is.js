@@ -50,7 +50,6 @@ OC.L10N.register(
     "Subscription key" : "Áskriftarlykill",
     "The subscription key was invalid." : "Áskriftarlykillinn er ógildur.",
     "News" : "Fréttir",
-    "Follow us on Google+" : "Fylgstu með okkur á Google+",
     "Like our Facebook page" : "Líkaðu við Facebook-síðuna okkar",
     "Follow us on Twitter" : "Fylgstu með okkur á Twitter",
     "Check out our blog" : "Kíktu á bloggið okkar",

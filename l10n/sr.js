@@ -36,7 +36,6 @@ OC.L10N.register(
     "Subscription key" : "Кључ претплате",
     "Set subscription key" : "Постави кључ претплате",
     "News" : "Вести",
-    "Follow us on Google+" : "Пратите нас на Google+-у",
     "Like our Facebook page" : "Лајкујте нам Фејсбук страну",
     "Follow us on Twitter" : "Запратите нас на Твитеру",
     "Check out our blog" : "Баците поглед на наш блог",

@@ -62,6 +62,9 @@ class SubscriptionService {
 	/** @var int */
 	private $userCount;
 
+	/** @var int */
+	private $activeUserCount;
+
 	/** @var IManager */
 	private $notifications;
 
@@ -144,6 +147,16 @@ class SubscriptionService {
 		return $this->userCount;
 	}
 
+	public function getActiveUserCount(): int {
+		if ($this->activeUserCount > 0) {
+			return $this->activeUserCount;
+		}
+
+		$this->activeUserCount = $this->userManager->countSeenUsers();;
+
+		return $this->activeUserCount;
+	}
+
 	public function renewSubscriptionInfo(bool $fast) {
 		$hasInternetConnection = $this->config->getSystemValue('has_internet_connection', true);
 
@@ -165,6 +178,7 @@ class SubscriptionService {
 		$error = null;
 		try {
 			$userCount = $this->getUserCount();
+			$activeUserCount = $this->userManager->countSeenUsers();
 
 			$httpClient = $this->clientService->newClient();
 			$backendURL = $this->config->getSystemValue('support.backend', 'https://cloud.nextcloud.com/');
@@ -175,6 +189,7 @@ class SubscriptionService {
 					'body' => [
 						'instanceId' => $this->config->getSystemValue('instanceid', ''),
 						'userCount' => $userCount,
+						'activeUserCount' => $activeUserCount,
 						'version' => implode('.', \OCP\Util::getVersion()),
 					],
 					'timeout' => $fast ? 10 : 30,
@@ -225,6 +240,7 @@ class SubscriptionService {
 
 	public function checkSubscription() {
 		$userCount = $this->getUserCount();
+		$activeUserCount = $this->getActiveUserCount();
 
 		$instanceSize = 'small';
 
@@ -254,7 +270,15 @@ class SubscriptionService {
 
 		$hasSubscription = $lastResponse !== '';
 		$isValidSubscription = ($years + $months + $days) > 0;
-		$isOverLimit = ($subscriptionInfo['amountOfUsers'] ?? 0) < $userCount;
+		$allowedUsersCount = $subscriptionInfo['amountOfUsers'] ?? 0;
+		$onlyCountActiveUsers = $subscriptionInfo['onlyCountActiveUsers'] ?? false;
+		if ($allowedUsersCount === -1) {
+			$isOverLimit = false;
+		} else if ($onlyCountActiveUsers) {
+			$isOverLimit = $allowedUsersCount < $activeUserCount;
+		} else {
+			$isOverLimit = $allowedUsersCount < $userCount;
+		}
 
 		if ($hasSubscription && !$isValidSubscription) {
 			$this->handleExpired(
@@ -467,7 +491,7 @@ class SubscriptionService {
 		$listItem4 = $l->t('You have the best expertise at hand to deal with performance and scalability issues.');
 		$listItem5 = $l->t('You have access to the right documentation and expertise to quickly answer compliance questions or deliver on GDPR, HIPAA and other regulation requirements.');
 
-		$text2 = $l->t('We can also provide Outlook integration, Online Office, scalable integrated audio-video and chat communication an other features only available in a limited form for free or develop further integrations and capabilities to you needs.');
+		$text2 = $l->t('We can also provide Outlook integration, Online Office, scalable integrated audio-video and chat communication an other features only available in a limited form for free or develop further integrations and capabilities to your needs.');
 		$text3 = $l->t('A subscription helps you get the most out of Nextcloud!');
 
 		$emailTemplate->addBodyText(
@@ -524,7 +548,7 @@ class SubscriptionService {
 		$emailTemplate->addHeader();
 		$emailTemplate->addHeading($l->t('Your Nextcloud server Subscription is over limit'));
 		$text = $l->t('Dear admin,');
-		$text2 = $l->t('Your Nextcloud Subscription doesn\'t cover the number of users who are currently active on this server. Please contact you Nextcloud account manager to get your subscription updated!');
+		$text2 = $l->t('Your Nextcloud Subscription doesn\'t cover the number of users who are currently active on this server. Please contact your Nextcloud account manager to get your subscription updated!');
 		$text3 = $l->t('%1$s is your account manager and can be reached by email via %2$s or by phone via %3$s.', [$accountManager, $accountManagerEmail, $accountManagerPhone]);
 		$text4 = $l->t('Thank you,');
 		$text5 = $l->t('Your Nextcloud team');
@@ -548,7 +572,7 @@ class SubscriptionService {
 		);
 
 		$generalLink = $this->urlGenerator->getAbsoluteURL('/');
-		$noteText = $l->t('This mail was sent to all administrators by the support app on your Nextcloud instance at %s because you have more users than what your subscription covers.', [$generalLink]);
+		$noteText = $l->t('This mail was sent to all administrators by the support app on your Nextcloud instance at %s because you have more users than your subscription covers.', [$generalLink]);
 		$emailTemplate->addBodyText($noteText);
 
 		$message->setTo([$user->getEMailAddress()]);
@@ -576,7 +600,7 @@ class SubscriptionService {
 		$emailTemplate->addHeader();
 		$emailTemplate->addHeading($l->t('Your Nextcloud server Subscription is expired!'));
 		$text = $l->t('Dear admin,');
-		$text2 = $l->t('Your Nextcloud Subscription has expired! Please contact you Nextcloud account manager to get your subscription updated!');
+		$text2 = $l->t('Your Nextcloud Subscription has expired! Please contact your Nextcloud account manager to get your subscription updated!');
 		$text3 = $l->t('%1$s is your account manager and can be reached by email via %2$s or by phone via %3$s.', [$accountManager, $accountManagerEmail, $accountManagerPhone]);
 		$text4 = $l->t('Thank you,');
 		$text5 = $l->t('Your Nextcloud team');

@@ -73,7 +73,6 @@ OC.L10N.register(
     "While fetching the subscription information an error happened." : "En obtenir la informació de subscripció s’ha produït un error.",
     "News" : "Notícies",
     "To get up to date information what is going on at Nextcloud sign up for the newsletter and follow us on our social media accounts." : "Per obtenir informació actualitzada el que està passant a Nextcloud registra't per al butlletí i segueix-nos a les nostres comptes de mitjans socials.",
-    "Follow us on Google+" : "Segueix-nos a Google+",
     "Like our Facebook page" : "M’agrada la nostra pàgina de Facebook",
     "Follow us on Twitter" : "Segueix-nos a Twitter",
     "Check out our blog" : "Comprovi el nostre blog",

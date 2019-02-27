@@ -36,7 +36,7 @@ if ($_['showSubscriptionDetails']) {
 				</h3>
 				<?php
 				if ($_['validSubscription']) {
-					if ($_['$overLimit']) {
+					if ($_['overLimit']) {
 					?>
 					<span class="badge overlimit icon-details">
 						<?php p($l->t('Over subscription limit')); ?>
@@ -76,9 +76,15 @@ if ($_['showSubscriptionDetails']) {
 					</li>
 					<li>
 						<?php
-						p($l->n('For %n users', 'For %n users', $_['subscriptionUsers']));
+						if ($_['subscriptionUsers'] === -1) {
+							p($l->t('For an unlimited amount of users'));
+						} else if ($_['onlyCountActiveUsers']) {
+							p($l->n('For %n active users', 'For %n active users', $_['subscriptionUsers']));
+						} else {
+							p($l->n('For %n users', 'For %n users', $_['subscriptionUsers']));
+						}
 
-						if ($_['$overLimit']) {
+						if ($_['overLimit']) {
 							?>
 							–
 							<span class="text-bold">
@@ -353,44 +359,37 @@ if ($_['showCommunitySupportSection']) {
 	<p class="social-button">
 		<?php print_unescaped(str_replace(
 			[
-				'{googleimage}',
 				'{facebookimage}',
 				'{twitterimage}',
 				'{rssimage}',
 				'{mailimage}',
-				'{googleopen}',
 				'{facebookopen}',
 				'{twitteropen}',
 				'{rssopen}',
 				'{newsletteropen}',
 				'{linkclose}',
-				'{googletext}',
 				'{facebooktext}',
 				'{twittertext}',
 				'{rsstext}',
 				'{mailtext}',
 			],
 			[
-				image_path('core', 'googleplus.svg'),
 				image_path('core', 'facebook.svg'),
 				image_path('core', 'twitter.svg'),
 				image_path('core', 'rss.svg'),
 				image_path('core', 'mail.svg'),
-				'<a target="_blank" rel="noreferrer noopener" href="https://plus.google.com/+Nextcloud">',
 				'<a target="_blank" rel="noreferrer noopener" href="https://www.facebook.com/Nextclouders/">',
 				'<a target="_blank" rel="noreferrer noopener" href="https://twitter.com/nextclouders">',
 				'<a target="_blank" rel="noreferrer noopener" href="https://nextcloud.com/news/">',
 				'<a target="_blank" rel="noreferrer noopener" href="https://newsletter.nextcloud.com/?p=subscribe&amp;id=1">',
 				'</a>',
-				$l->t('Follow us on Google+'),
 				$l->t('Like our Facebook page'),
 				$l->t('Follow us on Twitter'),
 				$l->t('Check out our blog'),
 				$l->t('Subscribe to our newsletter'),
 
 			],
-			'{googleopen}<img width="50 height="50" src="{googleimage}" title="{googletext}" alt="{googletext}">{linkclose}
-{facebookopen}<img width="50" height="50" src="{facebookimage}" title="{facebooktext}" alt="{facebooktext}">{linkclose}
+			'{facebookopen}<img width="50" height="50" src="{facebookimage}" title="{facebooktext}" alt="{facebooktext}">{linkclose}
 {twitteropen}<img width="50" height="50" src="{twitterimage}" title="{twittertext}" alt="{twittertext}">{linkclose}
 {rssopen}<img class="img-circle" width="50" height="50" src="{rssimage}" title="{rsstext}" alt="{rsstext}">{linkclose}
 {newsletteropen}<img width="50" height="50" src="{mailimage}" title="{mailtext}" alt="{mailtext}">{linkclose}'

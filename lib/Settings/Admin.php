@@ -64,6 +64,7 @@ class Admin implements ISettings {
 	public function getForm() {
 
 		$userCount = $this->subscriptionService->getUserCount();
+		$activeUserCount = $this->userManager->countSeenUsers();
 
 		$instanceSize = 'small';
 
@@ -117,6 +118,16 @@ class Admin implements ISettings {
 		if ($now < $groupwareEndDate) {
 			$specificSubscriptions[] = 'Groupware';
 		}
+		$allowedUsersCount = $subscriptionInfo['amountOfUsers'] ?? 0;
+		$onlyCountActiveUsers =  $subscriptionInfo['onlyCountActiveUsers'] ?? false;
+
+		if ($allowedUsersCount === -1) {
+			$isOverLimit = false;
+		} else if ($onlyCountActiveUsers) {
+			$isOverLimit = $allowedUsersCount < $activeUserCount;
+		} else {
+			$isOverLimit = $allowedUsersCount < $userCount;
+		}
 
 		$params = [
 			'instanceSize' => $instanceSize,
@@ -127,7 +138,8 @@ class Admin implements ISettings {
 			'contactPerson' => $subscriptionInfo['accountManagerInfo'] ?? '',
 
 			'subscriptionType' => $subscriptionInfo['level'] ?? '',
-			'subscriptionUsers' => $subscriptionInfo['amountOfUsers'] ?? '',
+			'subscriptionUsers' => $allowedUsersCount,
+			'onlyCountActiveUsers' => $onlyCountActiveUsers,
 			'specificSubscriptions' => $specificSubscriptions,
 			'expiryYears' => $years,
 			'expiryMonths' => $months,
@@ -135,7 +147,7 @@ class Admin implements ISettings {
 			'expiryDays' => $days,
 
 			'validSubscription' => ($years + $months + $days) > 0,
-			'$overLimit' => ($subscriptionInfo['amountOfUsers'] ?? 0) < $userCount,
+			'overLimit' => $isOverLimit,
 
 
 			'showSubscriptionDetails' => is_array($subscriptionInfo),

@@ -17,7 +17,6 @@ OC.L10N.register(
     "Your Nextcloud team" : "Ditt Nextcloud lag",
     "Your Nextcloud server Subscription is expired" : "Ditt Nextcloud server abonnement har utløpt!",
     "Your Nextcloud server Subscription is expired!" : "Ditt Nextcloud server abonnement har utløpt!",
-    "Your Nextcloud Subscription has expired! Please contact you Nextcloud account manager to get your subscription updated!" : "Ditt Nextcloud abonnement har utløpt! Vennligst kontakt din Nextcloud bruker-administrator for å få ditt abonnement oppdatert!",
     "Support" : "Støtte"
 },
 "nplurals=2; plural=(n != 1);");
