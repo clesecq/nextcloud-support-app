@@ -269,7 +269,7 @@ class SubscriptionService {
 		}
 
 		$hasSubscription = $lastResponse !== '';
-		$isValidSubscription = ($years + $months + $days) > 0;
+		$isInvalidSubscription = ($years + $months + $days) <= 0;
 		$allowedUsersCount = $subscriptionInfo['amountOfUsers'] ?? 0;
 		$onlyCountActiveUsers = $subscriptionInfo['onlyCountActiveUsers'] ?? false;
 		if ($allowedUsersCount === -1) {
@@ -280,7 +280,7 @@ class SubscriptionService {
 			$isOverLimit = $allowedUsersCount < $userCount;
 		}
 
-		if ($hasSubscription && !$isValidSubscription) {
+		if ($hasSubscription && $isInvalidSubscription) {
 			$this->handleExpired(
 				$subscriptionInfo['accountManagerInfo']['name'] ?? '',
 				$subscriptionInfo['accountManagerInfo']['email'] ?? '',
@@ -290,7 +290,7 @@ class SubscriptionService {
 				$subscriptionInfo['accountManagerInfo']['name'] ?? '',
 				$subscriptionInfo['accountManagerInfo']['email'] ?? '',
 				$subscriptionInfo['accountManagerInfo']['phone'] ?? '');
-		} else if ($instanceSize === 'large') {
+		} else if (!$hasSubscription && $instanceSize === 'large') {
 			$this->handleNoSubscription($instanceSize);
 		}
 	}
