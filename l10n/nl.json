@@ -100,7 +100,6 @@
     "The subscription key could not be verified, because this server has no internet connection. Please reach out to the support team to get this resolved." : "De abonnementssleutel kon niet worden geverifieerd omdat deze server geen internetverbinding heeft. Neem contact op met het supportteam om het probleem op te lossen.",
     "The subscription key had an invalid format." : "De abonnementssleutel heeft een ongeldig formaat.",
     "While fetching the subscription information an error happened." : "Er trad een fout op bij het ophalen van abonnementsinformatie.",
-    "The button below generates a text file in the folder \"System information\" and shares it as password protected public link. The link is valid for 2 weeks." : "De knop hieronder genereert een tekstbestand in de map \"System information\" en deelt dit als een met een wachtwoord beveiligde openbare link. De link is 2 weken geldig.",
     "News" : "Nieuws",
     "To get up to date information what is going on at Nextcloud sign up for the newsletter and follow us on our social media accounts." : "Om actuele informatie over Nextcloud te krijgen, kun je je aanmelden voor de nieuwsbrief en ons volgen op sociale media.",
     "Like our Facebook page" : "Vind onze Facebook pagina leuk",

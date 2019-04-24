@@ -12,7 +12,7 @@
 	<screenshot>https://user-images.githubusercontent.com/245432/43194622-1a40ce90-9003-11e8-8101-15d08cce7264.png</screenshot>
 	<default_enable/>
 	<dependencies>
-		<nextcloud min-version="15" max-version="15" />
+		<nextcloud min-version="16" max-version="16" />
 	</dependencies>
 	<settings>
 		<admin>OCA\Support\Settings\Admin</admin>

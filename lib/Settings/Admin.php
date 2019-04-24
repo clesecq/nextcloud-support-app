@@ -88,8 +88,6 @@ class Admin implements ISettings {
 				$this->config->deleteAppValue('support', 'potential_subscription_key');
 			}
 			$this->config->deleteAppValue('support', 'last_error');
-		} elseif ($lastError === SubscriptionService::ERROR_INVALID_SUBSCRIPTION_KEY) {
-			$this->config->deleteAppValue('support', 'last_error');
 		}
 		$subscriptionInfo = json_decode($lastResponse, true);
 
@@ -131,19 +129,13 @@ class Admin implements ISettings {
 			$isOverLimit = $allowedUsersCount < $userCount;
 		}
 
-		if (isset($subscriptionInfo['partnerContact']) && count($subscriptionInfo['partnerContact']) > 0) {
-			$contactInfo = $subscriptionInfo['partnerContact'];
-		} else {
-			$contactInfo = $subscriptionInfo['accountManagerInfo'] ?? '';
-		}
-
 		$params = [
 			'instanceSize' => $instanceSize,
 			'userCount' => $userCount,
 			'subscriptionKey' => $subscriptionKey,
 			'potentialSubscriptionKey' => $potentialSubscriptionKey,
 			'lastError' => $lastError,
-			'contactPerson' => $contactInfo,
+			'contactPerson' => $subscriptionInfo['accountManagerInfo'] ?? '',
 
 			'subscriptionType' => $subscriptionInfo['level'] ?? '',
 			'subscriptionUsers' => $allowedUsersCount,

@@ -24,20 +24,13 @@
 namespace OCA\Support\Sections;
 
 use OC\SystemConfig;
-use OCA\Files_External\Lib\StorageConfig;
-use OCA\Files_External\Service\GlobalStoragesService;
 use OCA\Support\IDetail;
-use OCA\User_LDAP\Configuration;
-use OCA\User_LDAP\Helper;
 use OCP\IConfig;
 use OC\IntegrityCheck\Checker;
 use OCP\App\IAppManager;
 use OCP\IDBConnection;
 use OCA\Support\Section;
 use OCA\Files_External\Service\BackendService;
-use OCP\IUserManager;
-use Symfony\Component\Console\Helper\Table;
-use Symfony\Component\Console\Output\BufferedOutput;
 
 class ServerSection extends Section {
 
@@ -51,21 +44,17 @@ class ServerSection extends Section {
 	private $systemConfig;
 	/** @var IDBConnection */
 	private $connection;
-	/** @var IUserManager */
-	private $userManager;
 
 	public function __construct(IConfig $config,
 								Checker $checker,
 								IAppManager $appManager,
-								IDBConnection $connection,
-								IUserManager $userManager) {
+								IDBConnection $connection) {
 		parent::__construct('server-detail', 'Server configuration detail');
 		$this->config = $config;
 		$this->checker = $checker;
 		$this->appManager = $appManager;
 		$this->systemConfig = \OC::$server->query('SystemConfig');
 		$this->connection = $connection;
-		$this->userManager = $userManager;
 		$this->createDetail('Operating system', $this->getOsVersion());
 		$this->createDetail('Webserver', $this->getWebserver());
 		$this->createDetail('Database', $this->getDatabaseInfo());
@@ -78,19 +67,20 @@ class ServerSection extends Section {
 
 		$this->createDetail('Configuration (config/config.php)', print_r(json_encode($this->getConfig(), JSON_PRETTY_PRINT), true), IDetail::TYPE_COLLAPSIBLE_PREFORMAT);
 
-		$externalStorageEnabled = $this->appManager->isEnabledForUser('files_external');
-		$this->createDetail('External storages', $externalStorageEnabled ? 'yes' : 'files_external is disabled');
-		if($externalStorageEnabled) {
-			$this->createDetail('External storage configuration', $this->getExternalStorageInfo(), IDetail::TYPE_COLLAPSIBLE_PREFORMAT);
-		}
+		$this->createDetail('Are you using external storage, if yes which one', $this->getExternalStorageInfo());
+		$this->createDetail('Are you using encryption', $this->getEncryptionInfo());
+		$this->createDetail('Are you using an external user-backend, if yes which one', 'LDAP/ActiveDirectory/Webdav/...');
 
-		$this->createDetail('Encryption', $this->getEncryptionInfo());
-		$this->createDetail('User-backends', $this->getUserBackendInfo());
+		$this->createDetail('LDAP configuration (delete this part if not used)', 'With access to your command line run e.g.:
+sudo -u www-data php occ ldap:show-config
+from within your Nextcloud installation folder
 
-		if ($this->isLDAPEnabled()) {
-			$this->createDetail('LDAP configuration', $this->getLDAPInfo(), IDetail::TYPE_COLLAPSIBLE_PREFORMAT);
-		}
+Without access to your command line download the data/owncloud.db to your local
+computer or access your SQL server remotely and run the select query:
+SELECT * FROM `oc_appconfig` WHERE `appid` = \'user_ldap\';
 
+
+Eventually replace sensitive data as the name/IP-address of your LDAP server or groups.', IDetail::TYPE_COLLAPSIBLE_PREFORMAT);
 		$this->createDetail('Browser', $this->getBrowser());
 	}
 	private function getWebserver() {
@@ -224,84 +214,19 @@ class ServerSection extends Section {
 	}
 
 	protected function getExternalStorageInfo() {
-		$globalService = \OC::$server->query(GlobalStoragesService::class);
-		$mounts = $globalService->getStorageForAllUsers();
-
-		// copy of OCA\Files_External\Command\ListCommand::listMounts
-		if ($mounts === null || count($mounts) === 0) {
-			return 'No mounts configured';
+		if(\OC::$server->getAppManager()->isEnabledForUser('files_external')) {
+			// $mounts = $this->globalService->getStorageForAllUsers();
+			// Global storage services
+			// https://github.com/nextcloud/server/blob/8c7d7d7746e76b77ad86cee3aae5dbd4d1bcd896/apps/files_external/lib/Command/ListCommand.php
+			/** @var BackendService $backendService */
+			$backendService = \OC::$server->query(BackendService::class);
+			$result = array();
+			foreach ($backendService->getAvailableBackends() as $backend) {
+				$result[] = $backend->getStorageClass();
+			}
+			return $result;
 		}
-		$headers = ['Mount ID', 'Mount Point', 'Storage', 'Authentication Type', 'Configuration', 'Options'];
-		$headers[] = 'Applicable Users';
-		$headers[] = 'Applicable Groups';
-		$headers[] = 'Type';
-
-		$hideKeys = ['password', 'refresh_token', 'token', 'client_secret', 'public_key', 'private_key'];
-		/** @var StorageConfig $mount */
-		foreach ($mounts as $mount) {
-			$config = $mount->getBackendOptions();
-			foreach ($config as $key => $value) {
-				if (in_array($key, $hideKeys)) {
-					$mount->setBackendOption($key, '***');
-				}
-			}
-		}
-
-		$defaultMountOptions = [
-			'encrypt' => true,
-			'previews' => true,
-			'filesystem_check_changes' => 1,
-			'enable_sharing' => false,
-			'encoding_compatibility' => false
-		];
-		$rows = array_map(function (StorageConfig $config) use ($defaultMountOptions) {
-			$storageConfig = $config->getBackendOptions();
-			$keys = array_keys($storageConfig);
-			$values = array_values($storageConfig);
-			$configStrings = array_map(function ($key, $value) {
-				return $key . ': ' . json_encode($value);
-			}, $keys, $values);
-			$configString = implode(', ', $configStrings);
-			$mountOptions = $config->getMountOptions();
-			// hide defaults
-			foreach ($mountOptions as $key => $value) {
-				if ($value === $defaultMountOptions[$key]) {
-					unset($mountOptions[$key]);
-				}
-			}
-			$keys = array_keys($mountOptions);
-			$values = array_values($mountOptions);
-			$optionsStrings = array_map(function ($key, $value) {
-				return $key . ': ' . json_encode($value);
-			}, $keys, $values);
-			$optionsString = implode(', ', $optionsStrings);
-			$values = [
-				$config->getId(),
-				$config->getMountPoint(),
-				$config->getBackend()->getText(),
-				$config->getAuthMechanism()->getText(),
-				$configString,
-				$optionsString
-			];
-			$applicableUsers = implode(', ', $config->getApplicableUsers());
-			$applicableGroups = implode(', ', $config->getApplicableGroups());
-			if ($applicableUsers === '' && $applicableGroups === '') {
-				$applicableUsers = 'All';
-			}
-			$values[] = $applicableUsers;
-			$values[] = $applicableGroups;
-			$values[] = $config->getType() === StorageConfig::MOUNT_TYPE_ADMIN ? 'Admin' : 'Personal';
-
-			return $values;
-		}, $mounts);
-
-		$output = new BufferedOutput();
-		$table = new Table($output);
-		$table->setHeaders($headers);
-		$table->setRows($rows);
-		$table->render();
-
-		return $output->fetch();
+		return 'files_external is disabled';
 	}
 
 	private function getConfig() {
@@ -337,58 +262,4 @@ class ServerSection extends Section {
 		return $browserString;
 	}
 
-	private function getUserBackendInfo() {
-		$backends = $this->userManager->getBackends();
-
-		$output = PHP_EOL;
-		foreach ($backends as $backend) {
-			$output .= ' * ' . get_class($backend) . PHP_EOL;
-		}
-
-		return $output;
-	}
-
-	private function isLDAPEnabled() {
-		$backends = $this->userManager->getBackends();
-
-		foreach ($backends as $backend) {
-			if ($backend instanceof \OCA\User_LDAP\User_Proxy) {
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	private function getLDAPInfo() {
-		/** @var Helper $helper */
-		$helper = \OC::$server->query(Helper::class);
-
-		$output = new BufferedOutput();
-
-		// copy of OCA\User_LDAP\Command\ShowConfig::renderConfigs
-		$configIDs = $helper->getServerConfigurationPrefixes();
-		foreach($configIDs as $id) {
-			$configHolder = new Configuration($id);
-			$configuration = $configHolder->getConfiguration();
-			ksort($configuration);
-
-			$table = new Table($output);
-			$table->setHeaders(array('Configuration', $id));
-			$rows = array();
-			foreach($configuration as $key => $value) {
-				if($key === 'ldapAgentPassword') {
-					$value = '***';
-				}
-				if(is_array($value)) {
-					$value = implode(';', $value);
-				}
-				$rows[] = array($key, $value);
-			}
-			$table->setRows($rows);
-			$table->render();
-		}
-
-		return $output->fetch();
-	}
 }

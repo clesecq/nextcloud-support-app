@@ -100,7 +100,6 @@
     "The subscription key could not be verified, because this server has no internet connection. Please reach out to the support team to get this resolved." : "Não foi possível verificar a chave de assinatura porque esse servidor não tem conexão à internet. Entre em contato com a equipe de suporte para resolver isso.",
     "The subscription key had an invalid format." : "A chave de assinatura tem um formato inválido.",
     "While fetching the subscription information an error happened." : "Ocorreu um erro ao buscar as informações da assinatura.",
-    "The button below generates a text file in the folder \"System information\" and shares it as password protected public link. The link is valid for 2 weeks." : "O botão abaixo gera um arquivo de texto na pasta \"Informações do sistema\" e o compartilha como um link público protegido por senha. O link é válido por duas semanas.",
     "News" : "Notícias",
     "To get up to date information what is going on at Nextcloud sign up for the newsletter and follow us on our social media accounts." : "Para informações atualizadas sobre o Nextcloud, inscreva-se no boletim informativo e siga-nos na redes sociais.",
     "Like our Facebook page" : "Curta nossa página no Facebook",

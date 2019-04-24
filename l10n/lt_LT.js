@@ -33,7 +33,6 @@ OC.L10N.register(
     "GitHub" : "GitHub",
     "Nextcloud forum" : "Nextcloud forumas",
     "Subscription key" : "Prenumeratos raktas",
-    "If you have an active Nextcloud Subscription please enter your subscription key here." : "Jeigu turite aktyvią Nextcloud prenumeratą, įveskite čia savo prenumeratos raktą.",
     "The subscription key was invalid." : "Prenumeratos raktas buvo neteisingas.",
     "The subscription key had an invalid format." : "Prenumeratos raktas buvo neteisingo formato.",
     "News" : "Naujienos",

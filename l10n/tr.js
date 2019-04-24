@@ -102,7 +102,6 @@ OC.L10N.register(
     "The subscription key could not be verified, because this server has no internet connection. Please reach out to the support team to get this resolved." : "Bu sunucunun İnternet bağlantısı olmadığından abonelik anahtarı doğrulanamadı. Bu sorunu çözmek için destek ekibimizle görüşün.",
     "The subscription key had an invalid format." : "Abonelik anahtarının biçimi geçersiz.",
     "While fetching the subscription information an error happened." : "Abonelik bilgileri alınırken bir sorun çıktı.",
-    "The button below generates a text file in the folder \"System information\" and shares it as password protected public link. The link is valid for 2 weeks." : "Aşağıdaki düğme \"System Information\" klasöründe bir metin dosyası oluşturur ve 2 hafta süreyle geçerli olacak, herkese açık olan ancak parola ile korunan bir bağlantı ile paylaşır. ",
     "News" : "Haberler",
     "To get up to date information what is going on at Nextcloud sign up for the newsletter and follow us on our social media accounts." : "Nextcloud ile ilgili gelişmeleri öğrenmek için bültenimize abone olabilir ya da sosyal ağlar üzerinden bizi izleyebilirsiniz.",
     "Like our Facebook page" : "Facebook sayfamızı beğenin",
