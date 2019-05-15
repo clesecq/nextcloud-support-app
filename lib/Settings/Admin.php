@@ -88,6 +88,8 @@ class Admin implements ISettings {
 				$this->config->deleteAppValue('support', 'potential_subscription_key');
 			}
 			$this->config->deleteAppValue('support', 'last_error');
+		} elseif ($lastError === SubscriptionService::ERROR_INVALID_SUBSCRIPTION_KEY) {
+			$this->config->deleteAppValue('support', 'last_error');
 		}
 		$subscriptionInfo = json_decode($lastResponse, true);
 

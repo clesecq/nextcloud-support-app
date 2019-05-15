@@ -138,8 +138,15 @@ class ApiController extends Controller {
 			$share->setShareType(\OC\Share\Constants::SHARE_TYPE_LINK);
 			$share->setSharedBy($this->userId);
 			$share->setPassword($password);
-			$expiry = new \DateTime();
-			$expiry->add(new \DateInterval('P2W'));
+
+			if ($this->shareManager->shareApiLinkDefaultExpireDateEnforced()) {
+				$expiry = new \DateTime();
+				$expiry->add(new \DateInterval('P' . $this->shareManager->shareApiLinkDefaultExpireDays() . 'D'));
+			} else {
+				$expiry = new \DateTime();
+				$expiry->add(new \DateInterval('P2W'));
+			}
+
 			$share->setExpirationDate($expiry);
 
 			$share = $this->shareManager->createShare($share);

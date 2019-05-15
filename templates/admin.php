@@ -348,6 +348,27 @@ if ($_['showCommunitySupportSection']) {
 	?>
 </div>
 
+
+<?php
+if (!$_['showSubscriptionDetails']) {
+	?>
+	<div class="section system-information">
+		<div>
+			<img src="<?php p(\OCP\Template::image_path('support', 'system-info.svg')); ?>">
+			<h3><?php p($l->t('System information')); ?></h3>
+			<p>
+				<?php p(
+					$l->t('The button below generates a text file in the folder "System information" and shares it as password protected public link. The link is valid for 2 weeks.')
+				); ?>
+			</p>
+			<button id="generate-report-button" class="button generate-report-button"><?php p($l->t('Generate system report')); ?></button>
+			<div id="report-status"></div>
+		</div>
+	</div>
+	<?php
+}
+?>
+
 <div class="section">
 	<h2><?php p($l->t('News')); ?></h2>
 	<p>

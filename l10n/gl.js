@@ -102,6 +102,7 @@ OC.L10N.register(
     "The subscription key could not be verified, because this server has no internet connection. Please reach out to the support team to get this resolved." : "Non foi posíbel verificar a chave de subscrición porque este servidor non ten conexión a internet. Póñase en contacto co equipo de asistencia para solucionar isto.",
     "The subscription key had an invalid format." : "A chave de subscrición ten un formato incorrecto.",
     "While fetching the subscription information an error happened." : "Produciuse un erro mentres se recuperaba a información da subscrición.",
+    "The button below generates a text file in the folder \"System information\" and shares it as password protected public link. The link is valid for 2 weeks." : "O botón de embaixo xera un ficheiro de texto no cartafol «Información do sistema» e comparte como ligazón pública protexida por contrasinal. A ligazón é válida durante dúas semanas",
     "News" : "Novas",
     "To get up to date information what is going on at Nextcloud sign up for the newsletter and follow us on our social media accounts." : "Para obter información actualizada de que está acontecendo co Nextcloud, rexístrese no boletín e siga as nosas contas nos medios sociais.",
     "Like our Facebook page" : "Faga un Gústame na nosa páxina de Facebook",

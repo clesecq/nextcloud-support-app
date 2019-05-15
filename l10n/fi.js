@@ -39,6 +39,7 @@ OC.L10N.register(
     "_Expires in %n month_::_Expires in %n months_" : ["Vanhenee %n kuukauden päästä","Vanhenee %n kuukauden päästä"],
     "_Expires in %n week_::_Expires in %n weeks_" : ["Vanhenee %n viikon päästä","Vanhenee %n viikon päästä"],
     "_Expires in %n day_::_Expires in %n days_" : ["Vanhenee %n päivän päästä","Vanhenee %n päivän päästä"],
+    "_For %n active users_::_For %n active users_" : ["%n aktiiviselle käyttäjälle","%n aktiiviselle käyttäjälle"],
     "_For %n users_::_For %n users_" : ["%n käyttäjälle","%n käyttäjälle"],
     "_currently at %n user_::_currently at %n users_" : ["parhaillaan %n käyttäjä","parhaillaan %n käyttäjää"],
     "Update subscription key" : "Päivitä tilausavain",

@@ -78,9 +78,15 @@ input[name="subscriptionKey"] {
 	opacity: .4;
 }
 
-#report-status.icon-loading:after {
-	width: 20px;
-	height: 20px;
+#report-status {
+	.icon-loading:after {
+		width: 20px;
+		height: 20px;
+	}
+
+	a {
+		text-decoration: underline;
+	}
 }
 
 ul.normal-list {
