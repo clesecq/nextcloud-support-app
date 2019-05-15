@@ -102,6 +102,7 @@ OC.L10N.register(
     "The subscription key could not be verified, because this server has no internet connection. Please reach out to the support team to get this resolved." : "La chiave di sottoscrizione non può essere verificata, poiché questo server non ha una connessione a Internet. Contatta la nostra squadra di supporto per risolvere il problema.",
     "The subscription key had an invalid format." : "La chiave di sottoscrizione avere un formato non valido.",
     "While fetching the subscription information an error happened." : "Si è verificato un errore durante il recupero delle informazioni di sottoscrizione.",
+    "The button below generates a text file in the folder \"System information\" and shares it as password protected public link. The link is valid for 2 weeks." : "Il pulsante seguente genera un file di testo nella cartella \"Informazioni di sistema\" e lo condivide come un collegamento pubblico protetto da password. il collegamento è valido per 2 settimane.",
     "News" : "Novità",
     "To get up to date information what is going on at Nextcloud sign up for the newsletter and follow us on our social media accounts." : "Per essere aggiornati sulle novità di Nextcloud, iscriviti alla nostra newsletter e seguici sulle nostre reti sociali.",
     "Like our Facebook page" : "Visita la nostra pagina di Facebook",

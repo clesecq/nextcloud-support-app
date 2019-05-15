@@ -25,8 +25,11 @@ declare(strict_types=1);
 namespace OCA\Support\AppInfo;
 
 use OCA\Support\Notification\Notifier;
+use OCA\Support\Subscription\SubscriptionAdapter;
 use OCP\AppFramework\App;
 use OCP\IUser;
+use OCP\Support\Subscription\Exception\AlreadyRegisteredException;
+use OCP\Support\Subscription\IRegistry;
 
 class Application extends App {
 	public function __construct() {
@@ -34,7 +37,17 @@ class Application extends App {
 	}
 
 	public function register() {
-		$server = $this->getContainer()->getServer();
+		$container = $this->getContainer();
+		$server = $container->getServer();
+
+		/* @var $registry IRegistry */
+		$registry = $container->query(IRegistry::class);
+		$subscription = $container->query(SubscriptionAdapter::class);
+		try {
+			$registry->register($subscription);
+		} catch (AlreadyRegisteredException $e) {
+			$server->getLogger()->logException($e, ['message' => 'Multiple subscription adapters are registered.', 'app' => 'support']);
+		}
 
 		$user = $server->getUserSession()->getUser();
 		if (!$user instanceof IUser) {

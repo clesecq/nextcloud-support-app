@@ -350,9 +350,9 @@ if ($_['showCommunitySupportSection']) {
 
 
 <?php
-if ($_['showCommunitySupportSection']) {
+if (!$_['showSubscriptionDetails']) {
 	?>
-	<div class="section community-support">
+	<div class="section system-information">
 		<div>
 			<img src="<?php p(\OCP\Template::image_path('support', 'system-info.svg')); ?>">
 			<h3><?php p($l->t('System information')); ?></h3>

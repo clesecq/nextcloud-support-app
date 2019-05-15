@@ -80,6 +80,8 @@ class SubscriptionService {
 	/** @var IFactory */
 	private $l10nFactory;
 
+	private $subscriptionInfoCache = null;
+
 	public function __construct(
 		IConfig $config,
 		IClientService $clientService,
@@ -238,7 +240,12 @@ class SubscriptionService {
 		$this->config->setAppValue('support', 'last_error', $error);
 	}
 
-	public function checkSubscription() {
+	public function getSubscriptionInfo(): array {
+
+		if ($this->subscriptionInfoCache !== null) {
+			return $this->subscriptionInfoCache;
+		}
+
 		$userCount = $this->getUserCount();
 		$activeUserCount = $this->getActiveUserCount();
 
@@ -279,6 +286,26 @@ class SubscriptionService {
 		} else {
 			$isOverLimit = $allowedUsersCount < $userCount;
 		}
+
+		$this->subscriptionInfoCache = [
+			$instanceSize,
+			$hasSubscription,
+			$isInvalidSubscription,
+			$isOverLimit,
+			$subscriptionInfo
+		];
+
+		return $this->subscriptionInfoCache;
+	}
+
+	public function checkSubscription() {
+		list(
+			$instanceSize,
+			$hasSubscription,
+			$isInvalidSubscription,
+			$isOverLimit,
+			$subscriptionInfo
+			) = $this->getSubscriptionInfo();
 
 		if ($hasSubscription && $isInvalidSubscription) {
 			$this->handleExpired(
