@@ -159,6 +159,15 @@ class SubscriptionAdapter implements ISubscription, ISupportedApps {
 		if ($hasValidOnlyOfficeSubscription) {
 			$supportedApps[] = 'onlyoffice';
 		}
+
+		if (isset($subscriptionInfo['supportedApps'])) {
+			foreach ($subscriptionInfo['supportedApps'] as $app) {
+				if ($app !== '' && !in_array($app, $supportedApps)) {
+					$supportedApps[] = $app;
+				}
+			}
+		}
+
 		return $supportedApps;
 	}
 }

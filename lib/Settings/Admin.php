@@ -131,13 +131,19 @@ class Admin implements ISettings {
 			$isOverLimit = $allowedUsersCount < $userCount;
 		}
 
+		if (isset($subscriptionInfo['partnerContact']) && count($subscriptionInfo['partnerContact']) > 0) {
+			$contactInfo = $subscriptionInfo['partnerContact'];
+		} else {
+			$contactInfo = $subscriptionInfo['accountManagerInfo'] ?? '';
+		}
+
 		$params = [
 			'instanceSize' => $instanceSize,
 			'userCount' => $userCount,
 			'subscriptionKey' => $subscriptionKey,
 			'potentialSubscriptionKey' => $potentialSubscriptionKey,
 			'lastError' => $lastError,
-			'contactPerson' => $subscriptionInfo['accountManagerInfo'] ?? '',
+			'contactPerson' => $contactInfo,
 
 			'subscriptionType' => $subscriptionInfo['level'] ?? '',
 			'subscriptionUsers' => $allowedUsersCount,
