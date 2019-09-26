@@ -99,20 +99,11 @@ class Admin implements ISettings {
 			$years = 0;
 			$months = 0;
 			$days = 0;
-			$weeks = 0;
 		} else {
 			$diff = $now->diff($subscriptionEndDate);
 			$years = (int)$diff->format('%y');
-			$months = (int)$diff->format('%m');
-			$days = (int)$diff->format('%d');
-			$weeks = floor($days / 7);
-
-			/* run up to the next month for 4 weeks and more */
-			if ($weeks > 3) {
-				$months += 1;
-				$weeks = 0;
-				$days = 0;
-			}
+			$months = $years * 12 + (int)$diff->format('%m');
+			$days = $months * 30 + (int)$diff->format('%d');
 		}
 
 		$specificSubscriptions = [];
@@ -158,9 +149,10 @@ class Admin implements ISettings {
 			'subscriptionUsers' => $allowedUsersCount,
 			'onlyCountActiveUsers' => $onlyCountActiveUsers,
 			'specificSubscriptions' => $specificSubscriptions,
+			'extendedSupport' => $subscriptionInfo['extendedSupport'] ?? false,
 			'expiryYears' => $years,
 			'expiryMonths' => $months,
-			'expiryWeeks' => $weeks,
+			'expiryWeeks' => floor($days / 7),
 			'expiryDays' => $days,
 
 			'validSubscription' => ($years + $months + $days) > 0,

@@ -151,7 +151,7 @@ class SubscriptionAdapter implements ISubscription, ISupportedApps {
 			$supportedApps[] = 'contacts';
 		}
 		if ($hasValidTalkSubscription) {
-			$supportedApps[] = 'spreed';
+			$supportedApps[] = 'talk';
 		}
 		if ($hasValidCollaboraSubscription) {
 			$supportedApps[] = 'richdocuments';
@@ -169,5 +169,22 @@ class SubscriptionAdapter implements ISubscription, ISupportedApps {
 		}
 
 		return $supportedApps;
+	}
+
+	/**
+	 * Indicates if the subscription has extended support
+	 *
+	 * @since 17.0.0
+	 */
+	public function hasExtendedSupport(): bool {
+		list(
+			$instanceSize,
+			$hasSubscription,
+			$isInvalidSubscription,
+			$isOverLimit,
+			$subscriptionInfo
+			) = $this->subscriptionService->getSubscriptionInfo();
+
+		return $subscriptionInfo['extendedSupport'] ?? false;
 	}
 }
