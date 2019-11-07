@@ -120,6 +120,8 @@ class SubscriptionAdapter implements ISubscription, ISupportedApps {
 			'systemtags',
 			'terms_of_service',
 			'theming',
+			'twofactor_totp',
+			'twofactor_u2f',
 			'updatenotification',
 			'user_ldap',
 			'user_saml',
