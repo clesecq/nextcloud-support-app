@@ -179,14 +179,7 @@ class SubscriptionAdapter implements ISubscription, ISupportedApps {
 	 * @since 17.0.0
 	 */
 	public function hasExtendedSupport(): bool {
-		list(
-			$instanceSize,
-			$hasSubscription,
-			$isInvalidSubscription,
-			$isOverLimit,
-			$subscriptionInfo
-			) = $this->subscriptionService->getSubscriptionInfo();
-
+		$subscriptionInfo = $this->subscriptionService->getMinimalSubscriptionInfo();
 		return $subscriptionInfo['extendedSupport'] ?? false;
 	}
 }

@@ -259,8 +259,7 @@ class SubscriptionService {
 			}
 		}
 
-		$lastResponse = $this->config->getAppValue('support', 'last_response', '');
-		$subscriptionInfo = json_decode($lastResponse, true);
+		$subscriptionInfo = $this->getMinimalSubscriptionInfo();
 
 		$now = new \DateTime();
 		$subscriptionEndDate = new \DateTime($subscriptionInfo['endDate'] ?? 'now');
@@ -275,7 +274,7 @@ class SubscriptionService {
 			$days = $months * 30 + (int)$diff->format('%d');
 		}
 
-		$hasSubscription = $lastResponse !== '';
+		$hasSubscription = $subscriptionInfo !== null;
 		$isInvalidSubscription = ($years + $months + $days) <= 0;
 		$allowedUsersCount = $subscriptionInfo['amountOfUsers'] ?? 0;
 		$onlyCountActiveUsers = $subscriptionInfo['onlyCountActiveUsers'] ?? false;
@@ -296,6 +295,11 @@ class SubscriptionService {
 		];
 
 		return $this->subscriptionInfoCache;
+	}
+
+	public function getMinimalSubscriptionInfo(): ?array {
+		$lastResponse = $this->config->getAppValue('support', 'last_response', '');
+		return json_decode($lastResponse, true);
 	}
 
 	public function checkSubscription() {
