@@ -208,27 +208,6 @@ class SubscriptionService {
 				$this->config->setAppValue('support', 'last_response', json_encode($body));
 				$this->config->deleteAppValue('support', 'last_error');
 
-				$currentUpdaterServer = $this->config->getSystemValue('updater.server.url', 'https://updates.nextcloud.com/updater_server/');
-				$newUpdaterServer = 'https://updates.nextcloud.com/customers/' . $subscriptionKey . '/';
-
-				/**
-				 * only overwrite the updater server if:
-				 * 	- it is the default one or another /.customers/ one
-				 *  - there is a valid subscription
-				 *  - there is a subscription key set
-				 *  - the subscription key is halfway sane
-				 */
-				if (
-					(
-						$currentUpdaterServer === 'https://updates.nextcloud.com/updater_server/' ||
-						substr($currentUpdaterServer, 0,  41) === 'https://updates.nextcloud.com/customers/'
-					) &&
-					$subscriptionKey !== '' &&
-					preg_match('!^[a-zA-Z0-9-]{10,250}$!', $subscriptionKey)
-				) {
-					$this->config->setSystemValue('updater.server.url', $newUpdaterServer);
-				}
-
 				// remove all pending notifications
 				$notification = $this->notifications->createNotification();
 				$notification->setApp('support')

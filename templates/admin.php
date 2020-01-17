@@ -63,35 +63,14 @@ if ($_['showSubscriptionDetails']) {
 					</li>
 					<li>
 						<?php
-						if ($_['validSubscription']) {
-							p($l->t('Expires in: '));
-							$outputBefore = false;
-							if ($_['expiryYears'] > 0) {
-								p($l->n('%n year', '%n years', $_['expiryYears']));
-								$outputBefore = true;
-							}
-							if ($_['expiryMonths'] > 0) {
-								if ($outputBefore) {
-									echo ', ';
-								}
-								p($l->n('%n month', '%n months', $_['expiryMonths']));
-								$outputBefore = true;
-							}
-							/* only show weeks or days if less than a year from now */
-							if ($_['expiryYears'] === 0) {
-								if ($_['expiryWeeks'] > 1) {
-									if ($outputBefore) {
-										echo ', ';
-									}
-									p($l->n('%n week', '%n weeks', $_['expiryWeeks']));
-									$outputBefore = true;
-								} else if ($_['expiryDays'] !== 0) {
-									if ($outputBefore) {
-										echo ', ';
-									}
-									p($l->n('%n day', '%n days', $_['expiryDays']));
-								}
-							}
+						if ($_['expiryYears'] > 0) {
+							p($l->n('Expires in %n year', 'Expires in %n years', $_['expiryYears']));
+						} else if ($_['expiryMonths'] > 0) {
+							p($l->n('Expires in %n month', 'Expires in %n months', $_['expiryMonths']));
+						} else if ($_['expiryWeeks'] > 0) {
+							p($l->n('Expires in %n week', 'Expires in %n weeks', $_['expiryWeeks']));
+						} else if ($_['expiryDays'] > 0) {
+							p($l->n('Expires in %n day', 'Expires in %n days', $_['expiryDays']));
 						}
 						?>
 					</li>
@@ -109,7 +88,7 @@ if ($_['showSubscriptionDetails']) {
 							?>
 							–
 							<span class="text-bold">
-							<?php p($l->n('currently at %n user', 'currently at %n users', $_['onlyCountActiveUsers'] ? $_['activeUserCount'] : $_['userCount'])); ?>
+							<?php p($l->n('currently at %n user', 'currently at %n users', $_['userCount'])); ?>
 							</span>
 							<?php
 						}

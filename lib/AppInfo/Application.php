@@ -32,11 +32,8 @@ use OCP\Support\Subscription\Exception\AlreadyRegisteredException;
 use OCP\Support\Subscription\IRegistry;
 
 class Application extends App {
-
-	public const APP_ID = 'support';
-
 	public function __construct() {
-		parent::__construct(self::APP_ID);
+		parent::__construct('support', []);
 	}
 
 	public function register() {
@@ -67,6 +64,14 @@ class Application extends App {
 
 	public function registerNotifier() {
 		$notificationsManager = $this->getContainer()->getServer()->getNotificationManager();
-		$notificationsManager->registerNotifierService(Notifier::class);
+		$notificationsManager->registerNotifier(function() {
+			return  $this->getContainer()->query(Notifier::class);
+		}, function() {
+			$l = $this->getContainer()->getServer()->getL10N('support');
+			return [
+				'id' => 'support',
+				'name' => $l->t('Subscription notifications'),
+			];
+		});
 	}
 }
