@@ -152,7 +152,7 @@ class ApiController extends Controller {
 			$share = $this->shareManager->createShare($share);
 		} catch (\Exception $e) {
 			$this->logger->logException($e, ['app' => 'support', 'message' => 'Could not share file "' . $filename . '".', 'level' => ILogger::WARN]);
-			$response = new DataResponse(['message' => $this->l10n->t('Could not share file "%s".', [$filename])]);
+			$response = new DataResponse(['message' => $this->l10n->t('Could not share file "%s". Nevertheless, you can find it in the folder "System information".', [$filename])]);
 			$response->setStatus(Http::STATUS_INTERNAL_SERVER_ERROR);
 			return $response;
 		}
