@@ -109,7 +109,7 @@ if ($_['showSubscriptionDetails']) {
 							?>
 							–
 							<span class="text-bold">
-							<?php p($l->n('currently at %n user', 'currently at %n users', $_['onlyCountActiveUsers'] ? $_['activeUserCount'] : $_['userCount'])); ?>
+							<?php p($l->n('currently at %n user', 'currently at %n users', $_['userCount'])); ?>
 							</span>
 							<?php
 						}
@@ -275,7 +275,7 @@ if ($_['showEnterpriseSupportSection']) {
 if ($_['showCommunitySupportSection']) {
 	?>
 	<div class="section community-support">
-		<h2><?php p($l->t('Commmunity support')); ?></h2>
+		<h2><?php p($l->t('Community support')); ?></h2>
 
 		<div class="columns">
 			<div style="background-image: url(<?php p(\OCP\Template::image_path('support', 'discourse.svg')); ?>)">
