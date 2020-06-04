@@ -151,7 +151,7 @@ class SubscriptionAdapter implements ISubscription, ISupportedApps {
 			$supportedApps[] = 'contacts';
 		}
 		if ($hasValidTalkSubscription) {
-			$supportedApps[] = 'talk';
+			$supportedApps[] = 'spreed';
 		}
 		if ($hasValidCollaboraSubscription) {
 			$supportedApps[] = 'richdocuments';
