@@ -25,6 +25,7 @@ declare(strict_types=1);
 namespace OCA\Support\Notification;
 
 
+use OCA\Support\AppInfo\Application;
 use OCP\IConfig;
 use OCP\IURLGenerator;
 use OCP\L10N\IFactory;
@@ -46,14 +47,19 @@ class Notifier implements INotifier {
 	/** @var IFactory */
 	protected $l10nFactory;
 
-	/** @var string[] */
-	protected $appVersions;
-
 	public function __construct(IURLGenerator $url, IConfig $config, IManager $notificationManager, IFactory $l10nFactory) {
 		$this->url = $url;
 		$this->notificationManager = $notificationManager;
 		$this->config = $config;
 		$this->l10nFactory = $l10nFactory;
+	}
+
+	public function getID(): string {
+		return 'support';
+	}
+
+	public function getName(): string {
+		return $this->l10nFactory->get(Application::APP_ID)->t('Subscription notifications');
 	}
 
 	/**
@@ -63,7 +69,7 @@ class Notifier implements INotifier {
 	 * @throws \InvalidArgumentException When the notification was not prepared by a notifier
 	 * @since 9.0.0
 	 */
-	public function prepare(INotification $notification, $languageCode): INotification {
+	public function prepare(INotification $notification, string $languageCode): INotification {
 		if ($notification->getApp() !== 'support') {
 			throw new \InvalidArgumentException('Unknown app id');
 		}
