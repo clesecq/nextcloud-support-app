@@ -109,7 +109,7 @@ if ($_['showSubscriptionDetails']) {
 							?>
 							–
 							<span class="text-bold">
-							<?php p($l->n('currently at %n user', 'currently at %n users', $_['userCount'])); ?>
+							<?php p($l->n('currently at %n user', 'currently at %n users', $_['onlyCountActiveUsers'] ? $_['activeUserCount'] : $_['userCount'])); ?>
 							</span>
 							<?php
 						}
