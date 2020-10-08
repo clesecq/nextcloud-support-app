@@ -149,6 +149,7 @@ class Admin implements ISettings {
 		$params = [
 			'instanceSize' => $instanceSize,
 			'userCount' => $userCount,
+			'activeUserCount' => $activeUserCount,
 			'subscriptionKey' => $subscriptionKey,
 			'potentialSubscriptionKey' => $potentialSubscriptionKey,
 			'lastError' => $lastError,
