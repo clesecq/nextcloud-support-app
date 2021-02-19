@@ -177,13 +177,14 @@ class SubscriptionService {
 			}
 		}
 
-		$backendURL = $this->config->getSystemValue('support.backend', 'https://cloud.nextcloud.com/');
-		$backendURL = rtrim($backendURL, '/') . '/apps/zammad_organisation_management/api/query/subscription/' . $subscriptionKey;
+		$error = null;
 		try {
 			$userCount = $this->getUserCount();
 			$activeUserCount = $this->userManager->countSeenUsers();
 
 			$httpClient = $this->clientService->newClient();
+			$backendURL = $this->config->getSystemValue('support.backend', 'https://cloud.nextcloud.com/');
+			$backendURL = rtrim($backendURL, '/') . '/apps/zammad_organisation_management/api/query/subscription/' . $subscriptionKey;
 			$response = $httpClient->post(
 				$backendURL,
 				[
@@ -542,7 +543,7 @@ class SubscriptionService {
 		$listItem4 = $l->t('You have the best expertise at hand to deal with performance and scalability issues.');
 		$listItem5 = $l->t('You have access to the right documentation and expertise to quickly answer compliance questions or deliver on GDPR, HIPAA and other regulation requirements.');
 
-		$text2 = $l->t('We can also provide Outlook integration, Online Office, scalable integrated audio-video and chat communication and other features only available in a limited form for free or develop further integrations and capabilities to your needs.');
+		$text2 = $l->t('We can also provide Outlook integration, Online Office, scalable integrated audio-video and chat communication an other features only available in a limited form for free or develop further integrations and capabilities to your needs.');
 		$text3 = $l->t('A subscription helps you get the most out of Nextcloud!');
 
 		$emailTemplate->addBodyText(
