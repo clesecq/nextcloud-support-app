@@ -221,7 +221,7 @@ class SubscriptionService {
 				if (
 					(
 						$currentUpdaterServer === 'https://updates.nextcloud.com/updater_server/' ||
-						substr($currentUpdaterServer, 0,  41) === 'https://updates.nextcloud.com/customers/'
+						substr($currentUpdaterServer, 0,  40) === 'https://updates.nextcloud.com/customers/'
 					) &&
 					$subscriptionKey !== '' &&
 					preg_match('!^[a-zA-Z0-9-]{10,250}$!', $subscriptionKey)
