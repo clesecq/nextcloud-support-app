@@ -177,14 +177,13 @@ class SubscriptionService {
 			}
 		}
 
-		$error = null;
+		$backendURL = $this->config->getSystemValue('support.backend', 'https://cloud.nextcloud.com/');
+		$backendURL = rtrim($backendURL, '/') . '/apps/zammad_organisation_management/api/query/subscription/' . $subscriptionKey;
 		try {
 			$userCount = $this->getUserCount();
 			$activeUserCount = $this->userManager->countSeenUsers();
 
 			$httpClient = $this->clientService->newClient();
-			$backendURL = $this->config->getSystemValue('support.backend', 'https://cloud.nextcloud.com/');
-			$backendURL = rtrim($backendURL, '/') . '/apps/zammad_organisation_management/api/query/subscription/' . $subscriptionKey;
 			$response = $httpClient->post(
 				$backendURL,
 				[
