@@ -29,12 +29,12 @@ use OCA\Files_External\Service\GlobalStoragesService;
 use OCA\Support\IDetail;
 use OCA\User_LDAP\Configuration;
 use OCA\User_LDAP\Helper;
+use OCP\Http\Client\IClientService;
 use OCP\IConfig;
 use OC\IntegrityCheck\Checker;
 use OCP\App\IAppManager;
 use OCP\IDBConnection;
 use OCA\Support\Section;
-use OCA\Files_External\Service\BackendService;
 use OCP\IUserManager;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Output\BufferedOutput;
@@ -51,6 +51,8 @@ class ServerSection extends Section {
 	private $systemConfig;
 	/** @var IDBConnection */
 	private $connection;
+	/** @var IClientService */
+	private $clientService;
 	/** @var IUserManager */
 	private $userManager;
 
@@ -58,6 +60,7 @@ class ServerSection extends Section {
 								Checker $checker,
 								IAppManager $appManager,
 								IDBConnection $connection,
+								IClientService $clientService,
 								IUserManager $userManager) {
 		parent::__construct('server-detail', 'Server configuration detail');
 		$this->config = $config;
@@ -65,6 +68,7 @@ class ServerSection extends Section {
 		$this->appManager = $appManager;
 		$this->systemConfig = \OC::$server->query('SystemConfig');
 		$this->connection = $connection;
+		$this->clientService = $clientService;
 		$this->userManager = $userManager;
 		$this->createDetail('Operating system', $this->getOsVersion());
 		$this->createDetail('Webserver', $this->getWebserver());
@@ -89,6 +93,9 @@ class ServerSection extends Section {
 
 		if ($this->isLDAPEnabled()) {
 			$this->createDetail('LDAP configuration', $this->getLDAPInfo(), IDetail::TYPE_COLLAPSIBLE_PREFORMAT);
+		}
+		if ($this->isTalkEnabled()) {
+			$this->createDetail('Talk configuration', $this->getTalkInfo());
 		}
 
 		$this->createDetail('Browser', $this->getBrowser());
@@ -186,11 +193,7 @@ class ServerSection extends Section {
 
 		$result .= "Disabled:\n";
 		foreach ($apps['disabled'] as $name => $version) {
-			if ($version) {
-				$result .= ' - ' . $name . ': ' . $version . "\n";
-			} else {
-				$result .= ' - ' . $name . "\n";
-			}
+			$result .= ' - ' . $name . "\n";
 		}
 		return $result;
 	}
@@ -214,11 +217,11 @@ class ServerSection extends Section {
 		$apps = ['enabled' => [], 'disabled' => []];
 		sort($enabledApps);
 		foreach ($enabledApps as $app) {
-			$apps['enabled'][$app] = $versions[$app] ?? true;
+			$apps['enabled'][$app] = isset($versions[$app]) ? $versions[$app] : true;
 		}
 		sort($disabledApps);
 		foreach ($disabledApps as $app) {
-			$apps['disabled'][$app] = $versions[$app] ?? false;
+			$apps['disabled'][$app] = null;
 		}
 		return $apps;
 	}
@@ -240,7 +243,7 @@ class ServerSection extends Section {
 		$headers[] = 'Applicable Groups';
 		$headers[] = 'Type';
 
-		$hideKeys = ['password', 'refresh_token', 'token', 'client_secret', 'public_key', 'private_key', 'key', 'secret'];
+		$hideKeys = ['password', 'refresh_token', 'token', 'client_secret', 'public_key', 'private_key'];
 		/** @var StorageConfig $mount */
 		foreach ($mounts as $mount) {
 			$config = $mount->getBackendOptions();
@@ -362,6 +365,90 @@ class ServerSection extends Section {
 		}
 
 		return false;
+	}
+
+	private function isTalkEnabled() {
+		return $this->appManager->isEnabledForUser('spreed');
+	}
+
+	private function getTalkInfo() {
+		$output = PHP_EOL;
+
+		$config = $this->config->getAppValue('spreed', 'stun_servers');
+		$servers = json_decode($config, true);
+
+		$output .= PHP_EOL;
+		$output .= 'STUN servers' . PHP_EOL;
+		if (empty($servers)) {
+			$output .= ' * no custom server configured' . PHP_EOL;
+		} else {
+			foreach ($servers as $server) {
+				$output .= ' * ' . $server . PHP_EOL;
+			}
+		}
+
+		$config = $this->config->getAppValue('spreed', 'turn_servers');
+		$servers = json_decode($config, true);
+
+		$output .= PHP_EOL;
+		$output .= 'TURN servers' . PHP_EOL;
+		if (empty($servers)) {
+			$output .= ' * no custom server configured' . PHP_EOL;
+		} else {
+			foreach ($servers as $server) {
+				$output .= ' * ' . ($server['schemes'] ?? 'turn') . ':' . $server['server'] . ' - ' . $server['protocols'] . PHP_EOL;
+			}
+		}
+
+		$config = $this->config->getAppValue('spreed', 'signaling_mode', 'internal');
+		$output .= PHP_EOL;
+		$output .= 'Signaling servers (mode: ' . $config . '):' . PHP_EOL;
+
+		$config = $this->config->getAppValue('spreed', 'signaling_servers');
+		$servers = json_decode($config, true);
+
+		if (empty($servers['servers'])) {
+			$output .= ' * no custom server configured' . PHP_EOL;
+		} else {
+			foreach ($servers['servers'] as $server) {
+				$output .= ' * ' . $server['server'] . ' - ' . $this->getHPBVersion($server['server']) . PHP_EOL;
+			}
+		}
+
+		return $output;
+	}
+
+	private function getHPBVersion(string $url): string {
+		$url = rtrim($url, '/');
+
+		if (strpos($url, 'wss://') === 0) {
+			$url = 'https://' . substr($url, 6);
+		}
+
+		if (strpos($url, 'ws://') === 0) {
+			$url = 'http://' . substr($url, 5);
+		}
+
+		$client = $this->clientService->newClient();
+		try {
+			$response = $client->get($url . '/api/v1/welcome', [
+				'verify' => false,
+				'nextcloud' => [
+					'allow_local_address' => true,
+				],
+			]);
+
+			$body = $response->getBody();
+
+			$data = json_decode($body, true);
+			if (!is_array($data) || !isset($data['version'])) {
+				return 'error';
+			}
+
+			return $data['version'];
+		} catch (\Exception $e) {
+			return 'error: ' . $e->getMessage();
+		}
 	}
 
 	private function getLDAPInfo() {

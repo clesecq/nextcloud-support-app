@@ -84,6 +84,7 @@ class SubscriptionAdapter implements ISubscription, ISupportedApps {
 			'accessibility',
 			'activity',
 			'admin_audit',
+			'bruteforcesettings',
 			'circles',
 			'comments',
 			'data_request',

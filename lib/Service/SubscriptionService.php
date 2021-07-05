@@ -534,7 +534,7 @@ class SubscriptionService {
 		$emailTemplate->setSubject($l->t('Your server has no Nextcloud Subscription'));
 		$emailTemplate->addHeader();
 		$emailTemplate->addHeading($l->t('Your Nextcloud server is not backed by a Nextcloud Enterprise Subscription.'));
-		$text = $l->t('A Nextcloud Enterprise Subscription means the original developers behind your self-hosted cloud server are 100%% dedicated to your success: the security, scalability, performance and functionality of your service!');
+		$text = $l->t('A Nextcloud Enterprise Subscription means the original developers behind your self-hosted cloud server are 100% dedicated to your success: the security, scalability, performance and functionality of your service!');
 
 		$listItem1 = $l->t('If your server setup breaks and employees can\'t work anymore, you don\'t have to rely on searching online forums for a solution. You have direct access to our experienced engineers!');
 		$listItem2 = $l->t('You have a contract with the vendor providing early security information, mitigations, patches and updates.');
