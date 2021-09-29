@@ -23,19 +23,21 @@
 
 namespace OCA\Support\Sections;
 
+use OC\DB\Exceptions\DbalException;
+use OC\IntegrityCheck\Checker;
 use OC\SystemConfig;
 use OCA\Files_External\Lib\StorageConfig;
 use OCA\Files_External\Service\GlobalStoragesService;
 use OCA\Support\IDetail;
+use OCA\Support\Section;
 use OCA\User_LDAP\Configuration;
 use OCA\User_LDAP\Helper;
+use OCP\App\IAppManager;
 use OCP\Http\Client\IClientService;
 use OCP\IConfig;
-use OC\IntegrityCheck\Checker;
-use OCP\App\IAppManager;
 use OCP\IDBConnection;
-use OCA\Support\Section;
 use OCP\IUserManager;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Output\BufferedOutput;
 
@@ -55,13 +57,16 @@ class ServerSection extends Section {
 	private $clientService;
 	/** @var IUserManager */
 	private $userManager;
+	/** @var LoggerInterface */
+	private $logger;
 
 	public function __construct(IConfig $config,
 								Checker $checker,
 								IAppManager $appManager,
 								IDBConnection $connection,
 								IClientService $clientService,
-								IUserManager $userManager) {
+								IUserManager $userManager,
+								LoggerInterface $logger) {
 		parent::__construct('server-detail', 'Server configuration detail');
 		$this->config = $config;
 		$this->checker = $checker;
@@ -70,6 +75,7 @@ class ServerSection extends Section {
 		$this->connection = $connection;
 		$this->clientService = $clientService;
 		$this->userManager = $userManager;
+		$this->logger = $logger;
 		$this->createDetail('Operating system', $this->getOsVersion());
 		$this->createDetail('Webserver', $this->getWebserver());
 		$this->createDetail('Database', $this->getDatabaseInfo());
@@ -133,7 +139,7 @@ class ServerSection extends Section {
 				$sql = 'SELECT sqlite_version() AS version';
 				break;
 			case 'oci':
-				$sql = 'SELECT version FROM v$instance';
+				$sql = 'SELECT VERSION FROM PRODUCT_COMPONENT_VERSION';
 				break;
 			case 'mysql':
 			case 'pgsql':
@@ -141,12 +147,20 @@ class ServerSection extends Section {
 				$sql = 'SELECT VERSION() AS version';
 				break;
 		}
-		$result = $this->connection->executeQuery($sql);
-		$row = $result->fetch();
-		$result->closeCursor();
-		if ($row) {
-			return $this->cleanVersion($row['version']);
+
+		try {
+			$result = $this->connection->executeQuery($sql);
+			$version = $result->fetchColumn();
+			$result->closeCursor();
+			if ($version) {
+				return $this->cleanVersion($version);
+			}
+		} catch (DBALException $e) {
+			$this->logger->debug('Unable to determine database version', [
+				'exception' => $e
+			]);
 		}
+
 		return 'N/A';
 	}
 
@@ -243,7 +257,7 @@ class ServerSection extends Section {
 		$headers[] = 'Applicable Groups';
 		$headers[] = 'Type';
 
-		$hideKeys = ['password', 'refresh_token', 'token', 'client_secret', 'public_key', 'private_key'];
+		$hideKeys = ['password', 'refresh_token', 'token', 'client_secret', 'public_key', 'private_key', 'key', 'secret'];
 		/** @var StorageConfig $mount */
 		foreach ($mounts as $mount) {
 			$config = $mount->getBackendOptions();

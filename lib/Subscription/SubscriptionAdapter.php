@@ -149,6 +149,11 @@ class SubscriptionAdapter implements ISubscription, ISupportedApps {
 
 		$nextcloudVersion = \OCP\Util::getVersion()[0];
 
+		if ($nextcloudVersion >= 22) {
+			$filesSubscription[] = 'approval';
+			$filesSubscription[] = 'contacts';
+		}
+		
 		if ($nextcloudVersion >= 20) {
 			$filesSubscription[] = 'dashboard';
 			$filesSubscription[] = 'flow_notifications';
