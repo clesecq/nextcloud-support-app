@@ -37,7 +37,9 @@ use OCP\IL10N;
 use OCP\ILogger;
 use OCP\IRequest;
 use OCP\IURLGenerator;
+use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IUserSession;
+use OCP\Security\Events\GenerateSecurePasswordEvent;
 use OCP\Security\ISecureRandom;
 use OCP\Share\IManager;
 
@@ -63,6 +65,8 @@ class ApiController extends Controller {
 	private $random;
 	/** @var string */
 	private $userId;
+	/** IEventDispatcher */
+	private $eventDispatcher;
 
 	public function __construct($appName,
 								IRequest $request,
@@ -75,6 +79,7 @@ class ApiController extends Controller {
 								ILogger $logger,
 								IL10N $l10n,
 								IManager $shareManager,
+								IEventDispatcher $eventDispatcher,
 								ISecureRandom $random) {
 		parent::__construct($appName, $request);
 
@@ -87,6 +92,7 @@ class ApiController extends Controller {
 		$this->shareManager = $shareManager;
 		$this->random = $random;
 		$this->userId = $userSession->getUser()->getUID();
+		$this->eventDispatcher = $eventDispatcher;
 
 		// Register core details that are used in every report
 		$this->detailManager->addSection($this->serverSection);
@@ -131,7 +137,9 @@ class ApiController extends Controller {
 		}
 
 		try {
-			$password = $this->random->generate(20);
+			$passwordEvent = new GenerateSecurePasswordEvent();
+			$this->eventDispatcher->dispatchTyped($passwordEvent);
+			$password = $passwordEvent->getPassword() ?? $this->random->generate(20);
 			$share = $this->shareManager->newShare();
 			$share->setNode($file);
 			$share->setPermissions(Constants::PERMISSION_READ);
