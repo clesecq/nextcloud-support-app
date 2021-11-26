@@ -76,5 +76,4 @@ class Section implements ISection {
 		$this->addDetail($detail);
 		return $detail;
 	}
-
 }

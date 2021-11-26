@@ -24,7 +24,6 @@
 namespace OCA\Support;
 
 class Detail implements IDetail {
-
 	private $section;
 	private $title;
 	private $information;

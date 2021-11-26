@@ -23,8 +23,8 @@
 
 
 return [
-    'routes' => [
-	    ['name' => 'api#setSubscriptionKey', 'url' => '/subscriptionKey', 'verb' => 'POST'],
+	'routes' => [
+		['name' => 'api#setSubscriptionKey', 'url' => '/subscriptionKey', 'verb' => 'POST'],
 		['name' => 'api#generateSystemReport', 'url' => '/generateSystemReport', 'verb' => 'POST'],
 	]
 ];

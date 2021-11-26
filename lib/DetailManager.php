@@ -24,16 +24,15 @@
 namespace OCA\Support;
 
 class DetailManager {
-
 	private $sections = [];
 
-	public function createSection($identifier, $title, $order=0) {
+	public function createSection($identifier, $title, $order = 0) {
 		$section = new Section($identifier, $title, $order);
 		$this->addSection($section);
 	}
 
 	public function addSection(ISection $section) {
-		if(array_key_exists($section->getIdentifier(), $this->sections)) {
+		if (array_key_exists($section->getIdentifier(), $this->sections)) {
 			/** @var ISection $existing */
 			$existing = $this->sections[$section->getIdentifier()];
 			foreach ($section->getDetails() as $detail) {

@@ -23,12 +23,11 @@
 namespace OCA\Support;
 
 interface IDetail {
-
-	const TYPE_SINGLE_LINE = 0;
-	const TYPE_MULTI_LINE = 1;
-	const TYPE_MULTI_LINE_PREFORMAT = 2;
-	const TYPE_COLLAPSIBLE = 3;
-	const TYPE_COLLAPSIBLE_PREFORMAT = 4;
+	public const TYPE_SINGLE_LINE = 0;
+	public const TYPE_MULTI_LINE = 1;
+	public const TYPE_MULTI_LINE_PREFORMAT = 2;
+	public const TYPE_COLLAPSIBLE = 3;
+	public const TYPE_COLLAPSIBLE_PREFORMAT = 4;
 
 	/**
 	 * @return string

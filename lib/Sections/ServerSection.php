@@ -60,13 +60,15 @@ class ServerSection extends Section {
 	/** @var LoggerInterface */
 	private $logger;
 
-	public function __construct(IConfig $config,
-								Checker $checker,
-								IAppManager $appManager,
-								IDBConnection $connection,
-								IClientService $clientService,
-								IUserManager $userManager,
-								LoggerInterface $logger) {
+	public function __construct(
+		IConfig $config,
+		Checker $checker,
+		IAppManager $appManager,
+		IDBConnection $connection,
+		IClientService $clientService,
+		IUserManager $userManager,
+		LoggerInterface $logger
+	) {
 		parent::__construct('server-detail', 'Server configuration detail');
 		$this->config = $config;
 		$this->checker = $checker;
@@ -91,7 +93,7 @@ class ServerSection extends Section {
 
 		$externalStorageEnabled = $this->appManager->isEnabledForUser('files_external');
 		$this->createDetail('External storages', $externalStorageEnabled ? 'yes' : 'files_external is disabled');
-		if($externalStorageEnabled) {
+		if ($externalStorageEnabled) {
 			$this->createDetail('External storage configuration', $this->getExternalStorageInfo(), IDetail::TYPE_COLLAPSIBLE_PREFORMAT);
 		}
 
@@ -195,7 +197,7 @@ class ServerSection extends Section {
 	}
 
 	private function getIntegrityResults() {
-		if(!$this->checker->isCodeCheckEnforced()) {
+		if (!$this->checker->isCodeCheckEnforced()) {
 			return 'Integrity checker has been disabled. Integrity cannot be verified.';
 		}
 		return $this->checker->getResults();
@@ -203,7 +205,7 @@ class ServerSection extends Section {
 
 	private function getInstallMethod() {
 		$base = \OC::$SERVERROOT;
-		if(file_exists($base . '/.git')) {
+		if (file_exists($base . '/.git')) {
 			return 'git';
 		}
 		return 'unknown';
@@ -218,11 +220,7 @@ class ServerSection extends Section {
 
 		$result .= "Disabled:\n";
 		foreach ($apps['disabled'] as $name => $version) {
-			if ($version) {
-				$result .= ' - ' . $name . ': ' . $version . "\n";
-			} else {
-				$result .= ' - ' . $name . "\n";
-			}
+			$result .= ' - ' . $name . "\n";
 		}
 		return $result;
 	}
@@ -246,11 +244,11 @@ class ServerSection extends Section {
 		$apps = ['enabled' => [], 'disabled' => []];
 		sort($enabledApps);
 		foreach ($enabledApps as $app) {
-			$apps['enabled'][$app] = $versions[$app] ?? true;
+			$apps['enabled'][$app] = isset($versions[$app]) ? $versions[$app] : true;
 		}
 		sort($disabledApps);
 		foreach ($disabledApps as $app) {
-			$apps['disabled'][$app] = $versions[$app] ?? false;
+			$apps['disabled'][$app] = null;
 		}
 		return $apps;
 	}
@@ -288,7 +286,8 @@ class ServerSection extends Section {
 			'previews' => true,
 			'filesystem_check_changes' => 1,
 			'enable_sharing' => false,
-			'encoding_compatibility' => false
+			'encoding_compatibility' => false,
+			'readonly' => false,
 		];
 		$rows = array_map(function (StorageConfig $config) use ($defaultMountOptions) {
 			$storageConfig = $config->getBackendOptions();
@@ -341,7 +340,6 @@ class ServerSection extends Section {
 	}
 
 	private function getConfig() {
-
 		$keys = $this->systemConfig->getKeys();
 		$configs = [];
 		foreach ($keys as $key) {
@@ -356,18 +354,18 @@ class ServerSection extends Section {
 	private function getBrowser() {
 		$browser = @get_browser(null, true);
 		$browserString = '';
-		if($browser) {
-			if(array_key_exists('browser', $browser)) {
+		if ($browser) {
+			if (array_key_exists('browser', $browser)) {
 				$browserString .= $browser['browser'] . ' ';
 			}
-			if(array_key_exists('version', $browser)) {
+			if (array_key_exists('version', $browser)) {
 				$browserString .= $browser['version'] . ' ';
 			}
-			if(array_key_exists('plattform', $browser)) {
+			if (array_key_exists('plattform', $browser)) {
 				$browserString .= $browser['plattform'] . ' ';
 			}
 		}
-		if(empty($browserString)) {
+		if (empty($browserString)) {
 			return $_SERVER['HTTP_USER_AGENT'];
 		}
 		return $browserString;
@@ -488,22 +486,22 @@ class ServerSection extends Section {
 
 		// copy of OCA\User_LDAP\Command\ShowConfig::renderConfigs
 		$configIDs = $helper->getServerConfigurationPrefixes();
-		foreach($configIDs as $id) {
+		foreach ($configIDs as $id) {
 			$configHolder = new Configuration($id);
 			$configuration = $configHolder->getConfiguration();
 			ksort($configuration);
 
 			$table = new Table($output);
-			$table->setHeaders(array('Configuration', $id));
-			$rows = array();
-			foreach($configuration as $key => $value) {
-				if($key === 'ldapAgentPassword') {
+			$table->setHeaders(['Configuration', $id]);
+			$rows = [];
+			foreach ($configuration as $key => $value) {
+				if ($key === 'ldapAgentPassword') {
 					$value = '***';
 				}
-				if(is_array($value)) {
+				if (is_array($value)) {
 					$value = implode(';', $value);
 				}
-				$rows[] = array($key, $value);
+				$rows[] = [$key, $value];
 			}
 			$table->setRows($rows);
 			$table->render();

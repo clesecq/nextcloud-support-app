@@ -68,19 +68,21 @@ class ApiController extends Controller {
 	/** IEventDispatcher */
 	private $eventDispatcher;
 
-	public function __construct($appName,
-								IRequest $request,
-								IURLGenerator $urlGenerator,
-								SubscriptionService $subscriptionService,
-								DetailManager $detailManager,
-								ServerSection $serverSection,
-								IRootFolder $rootFolder,
-								IUserSession $userSession,
-								ILogger $logger,
-								IL10N $l10n,
-								IManager $shareManager,
-								IEventDispatcher $eventDispatcher,
-								ISecureRandom $random) {
+	public function __construct(
+		$appName,
+		IRequest $request,
+		IURLGenerator $urlGenerator,
+		SubscriptionService $subscriptionService,
+		DetailManager $detailManager,
+		ServerSection $serverSection,
+		IRootFolder $rootFolder,
+		IUserSession $userSession,
+		ILogger $logger,
+		IL10N $l10n,
+		IManager $shareManager,
+		IEventDispatcher $eventDispatcher,
+		ISecureRandom $random
+	) {
 		parent::__construct($appName, $request);
 
 		$this->urlGenerator = $urlGenerator;
@@ -100,12 +102,18 @@ class ApiController extends Controller {
 		$this->userFolder = $rootFolder->getUserFolder($this->userId);
 	}
 
+	/**
+	 * @AuthorizedAdminSetting(settings=OCA\Support\Settings\Admin)
+	 */
 	public function setSubscriptionKey(string $subscriptionKey) {
 		$this->subscriptionService->setSubscriptionKey(trim($subscriptionKey));
 
 		return new RedirectResponse($this->urlGenerator->getAbsoluteURL($this->urlGenerator->linkToRoute('settings.AdminSettings.index', ['section' => 'support'])));
 	}
 
+	/**
+	 * @AuthorizedAdminSetting(settings=OCA\Support\Settings\Admin)
+	 */
 	public function generateSystemReport() {
 		try {
 			$directory = $this->userFolder->get('System information');

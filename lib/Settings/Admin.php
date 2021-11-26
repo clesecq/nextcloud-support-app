@@ -23,18 +23,15 @@
 
 namespace OCA\Support\Settings;
 
-use OC\User\Backend;
-use OCA\Support\DetailManager;
-use OCA\Support\Sections\ServerSection;
 use OCA\Support\Service\SubscriptionService;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\IConfig;
 use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\IUserManager;
-use OCP\Settings\ISettings;
+use OCP\Settings\IDelegatedSettings;
 
-class Admin implements ISettings {
+class Admin implements IDelegatedSettings {
 	/** @var IL10N */
 	private $l10n;
 	/** @var IConfig */
@@ -62,7 +59,6 @@ class Admin implements ISettings {
 	 * @return TemplateResponse
 	 */
 	public function getForm() {
-
 		$userCount = $this->subscriptionService->getUserCount();
 		$activeUserCount = $this->userManager->countSeenUsers();
 
@@ -130,11 +126,11 @@ class Admin implements ISettings {
 			$specificSubscriptions[] = 'Groupware';
 		}
 		$allowedUsersCount = $subscriptionInfo['amountOfUsers'] ?? 0;
-		$onlyCountActiveUsers =  $subscriptionInfo['onlyCountActiveUsers'] ?? false;
+		$onlyCountActiveUsers = $subscriptionInfo['onlyCountActiveUsers'] ?? false;
 
 		if ($allowedUsersCount === -1) {
 			$isOverLimit = false;
-		} else if ($onlyCountActiveUsers) {
+		} elseif ($onlyCountActiveUsers) {
 			$isOverLimit = $allowedUsersCount < $activeUserCount;
 		} else {
 			$isOverLimit = $allowedUsersCount < $userCount;
@@ -198,4 +194,13 @@ class Admin implements ISettings {
 		return 0;
 	}
 
+	public function getName(): ?string {
+		return null; // Only one setting in this section
+	}
+
+	public function getAuthorizedAppConfig(): array {
+		return [
+			'support' => ['.*'],
+		];
+	}
 }

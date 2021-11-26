@@ -38,14 +38,13 @@ use OCP\Mail\IMailer;
 use OCP\Notification\IManager;
 
 class SubscriptionService {
+	public const ERROR_FAILED_RETRY = 1;
+	public const ERROR_FAILED_INVALID = 2;
+	public const ERROR_NO_INTERNET_CONNECTION = 3;
+	public const ERROR_INVALID_SUBSCRIPTION_KEY = 4;
 
-	const ERROR_FAILED_RETRY = 1;
-	const ERROR_FAILED_INVALID = 2;
-	const ERROR_NO_INTERNET_CONNECTION = 3;
-	const ERROR_INVALID_SUBSCRIPTION_KEY = 4;
-
-	const THRESHOLD_MEDIUM = 100;
-	const THRESHOLD_LARGE = 500;
+	public const THRESHOLD_MEDIUM = 500;
+	public const THRESHOLD_LARGE = 1000;
 
 	/** @var IConfig */
 	private $config;
@@ -125,14 +124,8 @@ class SubscriptionService {
 		$backends = $this->userManager->getBackends();
 		foreach ($backends as $backend) {
 			if ($backend->implementsActions(Backend::COUNT_USERS)) {
-				try {
-					$backendUsers = $backend->countUsers();
-				} catch (\Exception $e) {
-					$backendUsers = false;
-
-					$this->log->logException($e, ['app' => 'support']);
-				}
-				if($backendUsers !== false) {
+				$backendUsers = $backend->countUsers();
+				if ($backendUsers !== false) {
 					$userCount += $backendUsers;
 				} else {
 					// TODO what if the user count can't be determined?
@@ -160,7 +153,8 @@ class SubscriptionService {
 			return $this->activeUserCount;
 		}
 
-		$this->activeUserCount = $this->userManager->countSeenUsers();;
+		$this->activeUserCount = $this->userManager->countSeenUsers();
+		;
 
 		return $this->activeUserCount;
 	}
@@ -267,7 +261,6 @@ class SubscriptionService {
 	}
 
 	public function getSubscriptionInfo(): array {
-
 		if ($this->subscriptionInfoCache !== null) {
 			return $this->subscriptionInfoCache;
 		}
@@ -306,7 +299,7 @@ class SubscriptionService {
 		$onlyCountActiveUsers = $subscriptionInfo['onlyCountActiveUsers'] ?? false;
 		if ($allowedUsersCount === -1) {
 			$isOverLimit = false;
-		} else if ($onlyCountActiveUsers) {
+		} elseif ($onlyCountActiveUsers) {
 			$isOverLimit = $allowedUsersCount < $activeUserCount;
 		} else {
 			$isOverLimit = $allowedUsersCount < $userCount;
@@ -329,31 +322,25 @@ class SubscriptionService {
 	}
 
 	public function checkSubscription() {
-		$hasInternetConnection = $this->config->getSystemValue('has_internet_connection', true);
-
-		if (!$hasInternetConnection) {
-			return;
-		}
-
-		list(
+		[
 			$instanceSize,
 			$hasSubscription,
 			$isInvalidSubscription,
 			$isOverLimit,
 			$subscriptionInfo
-			) = $this->getSubscriptionInfo();
+			] = $this->getSubscriptionInfo();
 
 		if ($hasSubscription && $isInvalidSubscription) {
 			$this->handleExpired(
 				$subscriptionInfo['accountManagerInfo']['name'] ?? '',
 				$subscriptionInfo['accountManagerInfo']['email'] ?? '',
 				$subscriptionInfo['accountManagerInfo']['phone'] ?? '');
-		} else if ($hasSubscription && $isOverLimit) {
+		} elseif ($hasSubscription && $isOverLimit) {
 			$this->handleOverLimit(
 				$subscriptionInfo['accountManagerInfo']['name'] ?? '',
 				$subscriptionInfo['accountManagerInfo']['email'] ?? '',
 				$subscriptionInfo['accountManagerInfo']['phone'] ?? '');
-		} else if (!$hasSubscription && $instanceSize === 'large') {
+		} elseif (!$hasSubscription && $instanceSize === 'large') {
 			$this->handleNoSubscription($instanceSize);
 		}
 	}
@@ -546,7 +533,7 @@ class SubscriptionService {
 		$emailTemplate->setSubject($l->t('Your server has no Nextcloud Subscription'));
 		$emailTemplate->addHeader();
 		$emailTemplate->addHeading($l->t('Your Nextcloud server is not backed by a Nextcloud Enterprise Subscription.'));
-		$text = $l->t('A Nextcloud Enterprise Subscription means the original developers behind your self-hosted cloud server are 100%% dedicated to your success: the security, scalability, performance and functionality of your service!');
+		$text = $l->t('A Nextcloud Enterprise Subscription means the original developers behind your self-hosted cloud server are 100% dedicated to your success: the security, scalability, performance and functionality of your service!');
 
 		$listItem1 = $l->t('If your server setup breaks and employees can\'t work anymore, you don\'t have to rely on searching online forums for a solution. You have direct access to our experienced engineers!');
 		$listItem2 = $l->t('You have a contract with the vendor providing early security information, mitigations, patches and updates.');

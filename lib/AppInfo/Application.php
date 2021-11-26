@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2018, Morris Jobke <hey@morrisjobke.de>
@@ -36,7 +37,6 @@ use OCP\Support\Subscription\Exception\AlreadyRegisteredException;
 use OCP\Support\Subscription\IRegistry;
 
 class Application extends App implements IBootstrap {
-
 	public const APP_ID = 'support';
 
 	public function __construct() {

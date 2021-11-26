@@ -19,31 +19,30 @@ if ($_['showSubscriptionDetails']) {
 					<?php
 					if ($_['subscriptionType'] === 'basic') {
 						p($l->t('Basic subscription'));
-					} else if ($_['subscriptionType'] === 'standard') {
+					} elseif ($_['subscriptionType'] === 'standard') {
 						p($l->t('Standard subscription'));
-					} else if ($_['subscriptionType'] === 'premium') {
+					} elseif ($_['subscriptionType'] === 'premium') {
 						p($l->t('Premium subscription'));
-					} else if ($_['subscriptionType'] === 'geant') {
+					} elseif ($_['subscriptionType'] === 'geant') {
 						p($l->t('Géant subscription'));
-					} else if ($_['subscriptionType'] === 'partner_silver') {
+					} elseif ($_['subscriptionType'] === 'partner_silver') {
 						p($l->t('Silver partner subscription'));
-					} else if ($_['subscriptionType'] === 'partner_gold') {
+					} elseif ($_['subscriptionType'] === 'partner_gold') {
 						p($l->t('Gold partner subscription'));
 					} else {
 						p($l->t('Subscription'));
-					}
-					?>
+					} ?>
 				</h3>
 				<?php
 				if ($_['validSubscription']) {
 					if ($_['overLimit']) {
-					?>
+						?>
 					<span class="badge overlimit icon-details">
 						<?php p($l->t('Over subscription limit')); ?>
 					</span>
 					<?php
 					} else {
-					?>
+						?>
 					<span class="badge supported icon-checkmark">
 						<?php p($l->t('Valid subscription')); ?>
 					</span>
@@ -55,11 +54,10 @@ if ($_['showSubscriptionDetails']) {
 						<?php p($l->t('Expired subscription')); ?>
 					</span>
 					<?php
-				}
-				?>
+				} ?>
 				<ul class="subscription-info">
 					<li>
-						<?php p($l->t('Subscription key:'));?> <pre><?php p($_['subscriptionKey']); ?></pre>
+						<?php p($l->t('Subscription key:')); ?> <pre><?php p($_['subscriptionKey']); ?></pre>
 					</li>
 					<li>
 						<?php
@@ -85,42 +83,40 @@ if ($_['showSubscriptionDetails']) {
 									}
 									p($l->n('%n week', '%n weeks', $_['expiryWeeks']));
 									$outputBefore = true;
-								} else if ($_['expiryDays'] !== 0) {
+								} elseif ($_['expiryDays'] !== 0) {
 									if ($outputBefore) {
 										echo ', ';
 									}
 									p($l->n('%n day', '%n days', $_['expiryDays']));
 								}
 							}
-						}
-						?>
+						} ?>
 					</li>
 					<li>
 						<?php
 						if ($_['subscriptionUsers'] === -1) {
 							p($l->t('For an unlimited amount of users'));
-						} else if ($_['onlyCountActiveUsers']) {
+						} elseif ($_['onlyCountActiveUsers']) {
 							p($l->n('For %n active users', 'For %n active users', $_['subscriptionUsers']));
 						} else {
 							p($l->n('For %n users', 'For %n users', $_['subscriptionUsers']));
 						}
 
-						if ($_['overLimit']) {
-							?>
+	if ($_['overLimit']) {
+		?>
 							–
 							<span class="text-bold">
 							<?php p($l->n('currently at %n user', 'currently at %n users', $_['onlyCountActiveUsers'] ? $_['activeUserCount'] : $_['userCount'])); ?>
 							</span>
 							<?php
-						}
-						?>
+	} ?>
 					</li>
 					<?php
 					if ($_['specificSubscriptions'] !== []) {
-					?>
+						?>
 						<li>
 							<?php
-							switch(count($_['specificSubscriptions'])) {
+							switch (count($_['specificSubscriptions'])) {
 								case 1:
 									$text = $l->t('Includes support for %s', $_['specificSubscriptions']);
 									break;
@@ -132,19 +128,16 @@ if ($_['showSubscriptionDetails']) {
 									break;
 							}
 
-							p($text);
-							?>
+						p($text); ?>
 						</li>
 					<?php
-					}
-					?>
+					} ?>
 					<?php
 					if ($_['extendedSupport']) {
 						?>
 						<li> <?php p($l->t('Extended maintenance life cycle')); ?></li>
 						<?php
-					}
-					?>
+					} ?>
 				</ul>
 				<p>
 					<a href="#subscription-key-section" class="subscription-toggle-subscription-key"><?php p($l->t('Update subscription key')); ?></a>
@@ -213,21 +206,18 @@ if ($_['showEnterpriseSupportSection']) {
 			?>
 			<h2><?php p($l->t('No active enterprise subscription')); ?></h2>
 			<?php
-		}
-		?>
+		} ?>
 
 		<div class="columns">
 			<div>
 				<img src="<?php p(\OCP\Template::image_path('support', 'signature.svg')); ?>">
 				<h3>
 					<?php
-						p($l->t('Subscription'));
-					?>
+						p($l->t('Subscription')); ?>
 				</h3>
 				<span class="badge unsupported icon-close">
 					<?php
-						p($l->t('Unsupported'));
-					?>
+						p($l->t('Unsupported')); ?>
 				</span>
 				<p>
 					<?php p(
@@ -236,8 +226,7 @@ if ($_['showEnterpriseSupportSection']) {
 				</p>
 				<p>
 					<?php
-						p($l->t('A Nextcloud Enterprise Subscription helps you get the most out of your Nextcloud, keep your data secure and your server working reliably at all times.'));
-					?>
+						p($l->t('A Nextcloud Enterprise Subscription helps you get the most out of your Nextcloud, keep your data secure and your server working reliably at all times.')); ?>
 				</p>
 			</div>
 			<div>
@@ -278,15 +267,17 @@ if ($_['showCommunitySupportSection']) {
 		<h2><?php p($l->t('Community support')); ?></h2>
 
 		<div class="columns">
-			<div style="background-image: url(<?php p(\OCP\Template::image_path('support', 'discourse.svg')); ?>)">
+			<section style="background-image: url(<?php p(\OCP\Template::image_path('support', 'discourse.svg')); ?>)">
 				<h3><?php p($l->t('Forum')); ?></h3>
 				<p>
 					<?php p(
 						$l->t('Nextcloud is free software which is supported by a very active community. Please register at the forum to ask questions and discuss with others.')
 					); ?>
 				</p>
-			</div>
-			<div style="background-image: url(<?php p(\OCP\Template::image_path('support', 'github.svg')); ?>)">
+				<a href="https://help.nextcloud.com"
+					target="blank" rel="no" class="button link-button"><?php p($l->t('Nextcloud forum')); ?></a>
+			</section>
+			<section style="background-image: url(<?php p(\OCP\Template::image_path('support', 'github.svg')); ?>)">
 				<h3>
 					<?php p($l->t('GitHub')); ?>
 				</h3>
@@ -295,29 +286,9 @@ if ($_['showCommunitySupportSection']) {
 						$l->t('Nextcloud uses GitHub as platform to collaboratively work. You can file bug reports directly there.')
 					); ?>
 				</p>
-			</div>
-			<div style="background-image: url(<?php p(\OCP\Template::image_path('support', 'chat.svg')); ?>)">
-				<h3><?php p($l->t('Chat')); ?></h3>
-				<p>
-					<?php p(
-						$l->t('Chat with us on our IRC channel #nextcloud on Freenode.')
-					); ?>
-				</p>
-			</div>
-		</div>
-		<div class="columns">
-			<p class="text-center">
-				<a href="https://help.nextcloud.com"
-					target="blank" rel="no" class="button link-button"><?php p($l->t('Nextcloud forum')); ?></a>
-			</p>
-			<p class="text-center">
 				<a href="https://github.com/nextcloud/"
 					target="blank" rel="no" class="button link-button"><?php p($l->t('Nextcloud at GitHub')); ?></a>
-			</p>
-			<p class="text-center">
-				<a href="https://riot.im/app/#/room/#freenode_#nextcloud:matrix.org"
-					target="blank" rel="no" class="button link-button"><?php p($l->t('Open chat')); ?></a>
-			</p>
+			</section>
 		</div>
 	</div>
 	<?php
@@ -325,7 +296,9 @@ if ($_['showCommunitySupportSection']) {
 ?>
 
 
-<div id="subscription-key-section" class="section <?php if (!$_['showSubscriptionKeyInput']) { p('hidden'); }  ?>">
+<div id="subscription-key-section" class="section <?php if (!$_['showSubscriptionKeyInput']) {
+	p('hidden');
+}  ?>">
 	<h2><?php p($l->t('Subscription key')); ?></h2>
 
 	<p>
@@ -352,7 +325,7 @@ if ($_['showCommunitySupportSection']) {
 		?>
 		<p style="color: #e9322d">
 			<?php
-			switch($_['lastError']) {
+			switch ($_['lastError']) {
 				case \OCA\Support\Service\SubscriptionService::ERROR_FAILED_RETRY:
 					p($l->t('The subscription info could not properly fetched right now. A retry is scheduled. Please check back later.'));
 					break;
@@ -368,8 +341,7 @@ if ($_['showCommunitySupportSection']) {
 				default:
 					p($l->t('While fetching the subscription information an error happened.'));
 					break;
-			}
-			?>
+			} ?>
 		</p>
 		<?php
 	}
@@ -379,7 +351,7 @@ if ($_['showCommunitySupportSection']) {
 
 <?php
 if (!$_['showSubscriptionDetails']) {
-	?>
+		?>
 	<div class="section system-information">
 		<div>
 			<img src="<?php p(\OCP\Template::image_path('support', 'system-info.svg')); ?>">
@@ -394,7 +366,7 @@ if (!$_['showSubscriptionDetails']) {
 		</div>
 	</div>
 	<?php
-}
+	}
 ?>
 
 <div class="section">

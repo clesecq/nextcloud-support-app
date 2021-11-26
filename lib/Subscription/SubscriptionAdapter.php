@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 /**
@@ -42,13 +43,13 @@ class SubscriptionAdapter implements ISubscription, ISupportedApps {
 	 * @return bool
 	 */
 	public function hasValidSubscription(): bool {
-		list(
+		[
 			$instanceSize,
 			$hasSubscription,
 			$isInvalidSubscription,
 			$isOverLimit,
 			$subscriptionInfo
-			) = $this->subscriptionService->getSubscriptionInfo();
+			] = $this->subscriptionService->getSubscriptionInfo();
 
 		return !$isInvalidSubscription;
 	}
@@ -68,13 +69,13 @@ class SubscriptionAdapter implements ISubscription, ISupportedApps {
 	 * @since 17.0.0
 	 */
 	public function getSupportedApps(): array {
-		list(
+		[
 			$instanceSize,
 			$hasSubscription,
 			$isInvalidSubscription,
 			$isOverLimit,
 			$subscriptionInfo
-			) = $this->subscriptionService->getSubscriptionInfo();
+			] = $this->subscriptionService->getSubscriptionInfo();
 		$hasValidGroupwareSubscription = $this->subscriptionNotExpired($subscriptionInfo['groupware']['endDate'] ?? 'now');
 		$hasValidTalkSubscription = $this->subscriptionNotExpired($subscriptionInfo['talk']['endDate'] ?? 'now');
 		$hasValidCollaboraSubscription = $this->subscriptionNotExpired($subscriptionInfo['collabora']['endDate'] ?? 'now');
@@ -218,13 +219,13 @@ class SubscriptionAdapter implements ISubscription, ISupportedApps {
 			return false;
 		}
 
-		list(
+		[
 			$instanceSize,
 			$hasSubscription,
 			$isInvalidSubscription,
 			$isOverLimit,
 			$subscriptionInfo
-			) = $this->getSubscriptionInfo();
+			] = $this->getSubscriptionInfo();
 		return $isOverLimit;
 	}
 }

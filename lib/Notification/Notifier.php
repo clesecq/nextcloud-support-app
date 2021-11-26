@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2018, Morris Jobke <hey@morrisjobke.de>
@@ -23,7 +24,6 @@ declare(strict_types=1);
  */
 
 namespace OCA\Support\Notification;
-
 
 use OCA\Support\AppInfo\Application;
 use OCP\IConfig;
