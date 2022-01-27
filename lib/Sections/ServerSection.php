@@ -186,7 +186,11 @@ class ServerSection extends Section {
 
 		$result .= "Disabled:\n";
 		foreach ($apps['disabled'] as $name => $version) {
-			$result .= ' - ' . $name . "\n";
+			if ($version) {
+				$result .= ' - ' . $name . ': ' . $version . "\n";
+			} else {
+				$result .= ' - ' . $name . "\n";
+			}
 		}
 		return $result;
 	}
@@ -210,11 +214,11 @@ class ServerSection extends Section {
 		$apps = ['enabled' => [], 'disabled' => []];
 		sort($enabledApps);
 		foreach ($enabledApps as $app) {
-			$apps['enabled'][$app] = isset($versions[$app]) ? $versions[$app] : true;
+			$apps['enabled'][$app] = $versions[$app] ?? true;
 		}
 		sort($disabledApps);
 		foreach ($disabledApps as $app) {
-			$apps['disabled'][$app] = null;
+			$apps['disabled'][$app] = $versions[$app] ?? false;
 		}
 		return $apps;
 	}
