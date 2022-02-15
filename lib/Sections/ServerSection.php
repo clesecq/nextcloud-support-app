@@ -240,7 +240,7 @@ class ServerSection extends Section {
 		$headers[] = 'Applicable Groups';
 		$headers[] = 'Type';
 
-		$hideKeys = ['password', 'refresh_token', 'token', 'client_secret', 'public_key', 'private_key'];
+		$hideKeys = ['password', 'refresh_token', 'token', 'client_secret', 'public_key', 'private_key', 'key', 'secret'];
 		/** @var StorageConfig $mount */
 		foreach ($mounts as $mount) {
 			$config = $mount->getBackendOptions();
