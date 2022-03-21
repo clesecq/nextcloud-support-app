@@ -124,7 +124,13 @@ class SubscriptionService {
 		$backends = $this->userManager->getBackends();
 		foreach ($backends as $backend) {
 			if ($backend->implementsActions(Backend::COUNT_USERS)) {
-				$backendUsers = $backend->countUsers();
+				try {
+					$backendUsers = $backend->countUsers();
+				} catch (\Exception $e) {
+					$backendUsers = false;
+
+					$this->log->logException($e, ['app' => 'support']);
+				}
 				if ($backendUsers !== false) {
 					$userCount += $backendUsers;
 				} else {
