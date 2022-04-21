@@ -87,6 +87,7 @@ class ServerSection extends Section {
 		$this->createDetail('List of activated apps', $this->renderAppList(), IDetail::TYPE_COLLAPSIBLE_PREFORMAT);
 
 		$this->createDetail('Configuration (config/config.php)', print_r(json_encode($this->getConfig(), JSON_PRETTY_PRINT), true), IDetail::TYPE_COLLAPSIBLE_PREFORMAT);
+		$this->createDetail('Cron Configuration', $this->getCronConfig());
 
 		$externalStorageEnabled = $this->appManager->isEnabledForUser('files_external');
 		$this->createDetail('External storages', $externalStorageEnabled ? 'yes' : 'files_external is disabled');
@@ -181,6 +182,16 @@ class ServerSection extends Section {
 			return $matches[0];
 		}
 		return $version;
+	}
+
+	/**
+	 * @return array{backgroundjobs_mode: string, lastcron: string}
+	 */
+	private function getCronConfig(): array {
+		return [
+			'backgroundjobs_mode' => $this->config->getAppValue('core', 'backgroundjobs_mode', 'ajax'),
+			'lastcron' => $this->config->getAppValue('core', 'lastcron', 'never'),
+		];
 	}
 
 	private function getIntegrityResults() {
