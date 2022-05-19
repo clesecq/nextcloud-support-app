@@ -328,6 +328,12 @@ class SubscriptionService {
 	}
 
 	public function checkSubscription() {
+		$hasInternetConnection = $this->config->getSystemValue('has_internet_connection', true);
+
+		if (!$hasInternetConnection) {
+			return;
+		}
+
 		[
 			$instanceSize,
 			$hasSubscription,
