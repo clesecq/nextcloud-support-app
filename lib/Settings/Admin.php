@@ -31,14 +31,10 @@ use OCP\IUserManager;
 use OCP\Settings\IDelegatedSettings;
 
 class Admin implements IDelegatedSettings {
-	/** @var IConfig */
-	private $config;
-	/** @var IUserManager */
-	private $userManager;
-	/** @var IURLGenerator */
-	private $urlGenerator;
-	/** @var SubscriptionService */
-	private $subscriptionService;
+	private IConfig $config;
+	private IUserManager $userManager;
+	private IURLGenerator $urlGenerator;
+	private SubscriptionService $subscriptionService;
 
 	public function __construct(IConfig $config,
 								IUserManager $userManager,

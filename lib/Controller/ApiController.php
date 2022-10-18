@@ -31,10 +31,10 @@ use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Http\RedirectResponse;
 use OCP\Constants;
+use OCP\Files\Folder;
 use OCP\Files\IRootFolder;
 use OCP\Files\NotFoundException;
 use OCP\IL10N;
-use OCP\ILogger;
 use OCP\IRequest;
 use OCP\IURLGenerator;
 use OCP\EventDispatcher\IEventDispatcher;
@@ -42,38 +42,31 @@ use OCP\IUserSession;
 use OCP\Security\Events\GenerateSecurePasswordEvent;
 use OCP\Security\ISecureRandom;
 use OCP\Share\IManager;
+use Psr\Log\LoggerInterface;
 
 class ApiController extends Controller {
-
-	/** @var IURLGenerator */
-	private $urlGenerator;
-	/** @var SubscriptionService */
-	private $subscriptionService;
-	/** @var ServerSection */
-	private $serverSection;
-	/** @var ILogger */
-	private $logger;
-	/** @var IL10N */
-	private $l10n;
-	/** @var IManager */
-	private $shareManager;
-	/** @var \OCP\Files\Folder */
-	private $userFolder;
-	/** @var ISecureRandom */
-	private $random;
-	/** @var string */
-	private $userId;
-	/** IEventDispatcher */
-	private $eventDispatcher;
+	private IURLGenerator $urlGenerator;
+	private SubscriptionService $subscriptionService;
+	private DetailManager $detailManager;
+	private ServerSection $serverSection;
+	private LoggerInterface $logger;
+	private IL10N $l10n;
+	private IManager $shareManager;
+	private Folder $userFolder;
+	private ISecureRandom $random;
+	private string $userId;
+	private IEventDispatcher $eventDispatcher;
 
 	public function __construct(
 		$appName,
 		IRequest $request,
 		IURLGenerator $urlGenerator,
 		SubscriptionService $subscriptionService,
+		DetailManager $detailManager,
+		ServerSection $serverSection,
 		IRootFolder $rootFolder,
 		IUserSession $userSession,
-		ILogger $logger,
+		LoggerInterface $logger,
 		IL10N $l10n,
 		IManager $shareManager,
 		IEventDispatcher $eventDispatcher,
@@ -83,6 +76,8 @@ class ApiController extends Controller {
 
 		$this->urlGenerator = $urlGenerator;
 		$this->subscriptionService = $subscriptionService;
+		$this->detailManager = $detailManager;
+		$this->serverSection = $serverSection;
 		$this->logger = $logger;
 		$this->l10n = $l10n;
 		$this->shareManager = $shareManager;
@@ -112,7 +107,10 @@ class ApiController extends Controller {
 			try {
 				$directory = $this->userFolder->newFolder('System information');
 			} catch (\Exception $ex) {
-				$this->logger->logException($ex, ['app' => 'support', 'message' => 'Could not create folder "System information" to store generated report.', 'level' => ILogger::WARN]);
+				$this->logger->warning('Could not create folder "System information" to store generated report.', [
+					'app' => 'support',
+					'exception' => $e,
+				]);
 				$response = new DataResponse(['message' => $this->l10n->t('Could not create folder "System information" to store generated report.')]);
 				$response->setStatus(Http::STATUS_INTERNAL_SERVER_ERROR);
 				return $response;
@@ -126,11 +124,13 @@ class ApiController extends Controller {
 
 		try {
 			$file = $directory->newFile($filename);
-			$detailManager = \OC::$server->get(DetailManager::class);
-			$details = $detailManager->getRenderedDetails();
+			$details = $this->detailManager->getRenderedDetails();
 			$file->putContent($details);
 		} catch (\Exception $e) {
-			$this->logger->logException($e, ['app' => 'support', 'message' => 'Could not create file "' . $filename . '" to store generated report.', 'level' => ILogger::WARN]);
+			$this->logger->warning('Could not create file "' . $filename . '" to store generated report.', [
+				'app' => 'support',
+				'exception' => $e,
+			]);
 			$response = new DataResponse(['message' => $this->l10n->t('Could not create file "%s" to store generated report.', [ $filename ])]);
 			$response->setStatus(Http::STATUS_INTERNAL_SERVER_ERROR);
 			return $response;
@@ -159,7 +159,10 @@ class ApiController extends Controller {
 
 			$share = $this->shareManager->createShare($share);
 		} catch (\Exception $e) {
-			$this->logger->logException($e, ['app' => 'support', 'message' => 'Could not share file "' . $filename . '".', 'level' => ILogger::WARN]);
+			$this->logger->warning('Could not share file "' . $filename . '".', [
+				'app' => 'support',
+				'exception' => $e,
+			]);
 			$response = new DataResponse(['message' => $this->l10n->t('Could not share file "%s". Nevertheless, you can find it in the folder "System information".', [$filename])]);
 			$response->setStatus(Http::STATUS_INTERNAL_SERVER_ERROR);
 			return $response;

@@ -42,23 +42,14 @@ use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Output\BufferedOutput;
 
 class ServerSection extends Section {
-
-	/** @var IConfig */
-	private $config;
-	/** @var Checker */
-	private $checker;
-	/** @var IAppManager */
-	private $appManager;
-	/** @var SystemConfig */
-	private $systemConfig;
-	/** @var IDBConnection */
-	private $connection;
-	/** @var IClientService */
-	private $clientService;
-	/** @var IUserManager */
-	private $userManager;
-	/** @var LoggerInterface */
-	private $logger;
+	private IConfig $config;
+	private Checker $checker;
+	private IAppManager $appManager;
+	private SystemConfig $systemConfig;
+	private IDBConnection $connection;
+	private IClientService $clientService;
+	private IUserManager $userManager;
+	private LoggerInterface $logger;
 
 	public function __construct(
 		IConfig $config,
@@ -177,7 +168,7 @@ class ServerSection extends Section {
 	 * @param string $version E.g. `5.6.27-0ubuntu0.14.04.1`
 	 * @return string `5.6.27`
 	 */
-	protected function cleanVersion($version) {
+	protected function cleanVersion(string $version): string {
 		$matches = [];
 		preg_match('/^(\d+)(\.\d+)(\.\d+)/', $version, $matches);
 		if (isset($matches[0])) {
@@ -196,14 +187,14 @@ class ServerSection extends Section {
 		];
 	}
 
-	private function getIntegrityResults() {
+	private function getIntegrityResults(): string {
 		if (!$this->checker->isCodeCheckEnforced()) {
 			return 'Integrity checker has been disabled. Integrity cannot be verified.';
 		}
-		return $this->checker->getResults();
+		return print_r(json_encode($this->checker->getResults(), JSON_PRETTY_PRINT), true);
 	}
 
-	private function getInstallMethod() {
+	private function getInstallMethod(): string {
 		$base = \OC::$SERVERROOT;
 		if (file_exists($base . '/.git')) {
 			return 'git';

@@ -29,9 +29,7 @@ use OCP\Support\Subscription\ISubscription;
 use OCP\Support\Subscription\ISupportedApps;
 
 class SubscriptionAdapter implements ISubscription, ISupportedApps {
-
-	/** @var SubscriptionService */
-	private $subscriptionService;
+	private SubscriptionService $subscriptionService;
 
 	public function __construct(SubscriptionService $subscriptionService) {
 		$this->subscriptionService = $subscriptionService;
@@ -39,8 +37,6 @@ class SubscriptionAdapter implements ISubscription, ISupportedApps {
 
 	/**
 	 * Indicates if a valid subscription is available
-	 *
-	 * @return bool
 	 */
 	public function hasValidSubscription(): bool {
 		[
@@ -150,16 +146,11 @@ class SubscriptionAdapter implements ISubscription, ISupportedApps {
 
 		$nextcloudVersion = \OCP\Util::getVersion()[0];
 
-		if ($nextcloudVersion >= 24) {
-			$filesSubscription[] = 'files_lock';
-		}
-		
 		if ($nextcloudVersion >= 22) {
 			$filesSubscription[] = 'approval';
 			$filesSubscription[] = 'contacts';
-			$filesSubscription[] = 'files_zip';
 		}
-		
+
 		if ($nextcloudVersion >= 20) {
 			$filesSubscription[] = 'dashboard';
 			$filesSubscription[] = 'flow_notifications';
@@ -230,7 +221,7 @@ class SubscriptionAdapter implements ISubscription, ISupportedApps {
 			$isInvalidSubscription,
 			$isOverLimit,
 			$subscriptionInfo
-			] = $this->getSubscriptionInfo();
+			] = $this->subscriptionService->getSubscriptionInfo();
 		return $isOverLimit;
 	}
 }

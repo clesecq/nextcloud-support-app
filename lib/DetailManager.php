@@ -26,7 +26,7 @@ namespace OCA\Support;
 use OCA\Support\Sections\ServerSection;
 
 class DetailManager {
-	private $sections = [];
+	private array $sections = [];
 	private $detailManager;
 
 	public function __construct(ServerSection $serverSection) {
@@ -34,12 +34,12 @@ class DetailManager {
 		$this->addSection($serverSection);
 	}
 
-	public function createSection($identifier, $title, $order = 0) {
+	public function createSection(string $identifier, string $title, int $order = 0): void {
 		$section = new Section($identifier, $title, $order);
 		$this->addSection($section);
 	}
 
-	public function addSection(ISection $section) {
+	public function addSection(ISection $section): void {
 		if (array_key_exists($section->getIdentifier(), $this->sections)) {
 			/** @var ISection $existing */
 			$existing = $this->sections[$section->getIdentifier()];
@@ -51,17 +51,11 @@ class DetailManager {
 		$this->sections[$section->getIdentifier()] = $section;
 	}
 
-	public function removeSection($section) {
+	public function removeSection(string $section): void {
 		unset($this->sections[$section]);
 	}
 
-	/**
-	 * @param string $sectionIdentifier
-	 * @param string $title
-	 * @param string $information
-	 * @param int $type
-	 */
-	public function createDetail($sectionIdentifier, $title, $information, $type = IDetail::TYPE_MULTI_LINE_PREFORMAT) {
+	public function createDetail(string $sectionIdentifier, string $title, string $information, int $type = IDetail::TYPE_MULTI_LINE_PREFORMAT): void {
 		$detail = new Detail($sectionIdentifier, $title, $information, $type);
 		/** @var ISection $sectionObject */
 		$sectionObject = $this->sections[$sectionIdentifier];
@@ -71,11 +65,11 @@ class DetailManager {
 	/**
 	 * @return ISection[]
 	 */
-	public function getSections() {
+	public function getSections(): array {
 		return $this->sections;
 	}
 
-	public function getRenderedDetails() {
+	public function getRenderedDetails(): string {
 		$result = '';
 		/** @var ISection $section */
 		foreach ($this->sections as $section) {
@@ -88,30 +82,24 @@ class DetailManager {
 		return $result;
 	}
 
-	private function renderSectionHeader(ISection $section) {
+	private function renderSectionHeader(ISection $section): string {
 		return '## ' . $section->getTitle() . "\n\n";
 	}
 
-	private function renderDetail(IDetail $detail) {
+	private function renderDetail(IDetail $detail): string {
 		switch ($detail->getType()) {
 			case IDetail::TYPE_SINGLE_LINE:
 				return '**' . $detail->getTitle() . ':** ' . $detail->getInformation() . "\n\n";
-				break;
 			case IDetail::TYPE_MULTI_LINE:
 				return '**' . $detail->getTitle() . ":** \n\n" . $detail->getInformation() . "\n\n";
-				break;
 			case IDetail::TYPE_MULTI_LINE_PREFORMAT:
 				return '**' . $detail->getTitle() . ":** \n\n``` \n" . $detail->getInformation() . "\n```\n\n";
-				break;
 			case IDetail::TYPE_COLLAPSIBLE:
 				return '<details><summary>' . $detail->getTitle() . "</summary>\n\n" . $detail->getInformation() . "\n</details>\n\n";
-				break;
 			case IDetail::TYPE_COLLAPSIBLE_PREFORMAT:
 				return '<details><summary>' . $detail->getTitle() . "</summary>\n\n```\n" . $detail->getInformation() . "\n```\n</details>\n\n";
-				break;
 			default:
 				return '**' . $detail->getTitle() . ':** ' . $detail->getInformation() . "\n\n";
-				break;
 		}
 	}
 }
