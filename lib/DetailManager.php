@@ -27,7 +27,6 @@ use OCA\Support\Sections\ServerSection;
 
 class DetailManager {
 	private array $sections = [];
-	private $detailManager;
 
 	public function __construct(ServerSection $serverSection) {
 		// Register core details that are used in every report

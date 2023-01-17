@@ -47,7 +47,6 @@ use Psr\Log\LoggerInterface;
 class ApiController extends Controller {
 	private IURLGenerator $urlGenerator;
 	private SubscriptionService $subscriptionService;
-	private DetailManager $detailManager;
 	private ServerSection $serverSection;
 	private LoggerInterface $logger;
 	private IL10N $l10n;
@@ -62,8 +61,6 @@ class ApiController extends Controller {
 		IRequest $request,
 		IURLGenerator $urlGenerator,
 		SubscriptionService $subscriptionService,
-		DetailManager $detailManager,
-		ServerSection $serverSection,
 		IRootFolder $rootFolder,
 		IUserSession $userSession,
 		LoggerInterface $logger,
@@ -76,8 +73,6 @@ class ApiController extends Controller {
 
 		$this->urlGenerator = $urlGenerator;
 		$this->subscriptionService = $subscriptionService;
-		$this->detailManager = $detailManager;
-		$this->serverSection = $serverSection;
 		$this->logger = $logger;
 		$this->l10n = $l10n;
 		$this->shareManager = $shareManager;
@@ -124,7 +119,8 @@ class ApiController extends Controller {
 
 		try {
 			$file = $directory->newFile($filename);
-			$details = $this->detailManager->getRenderedDetails();
+			$detailManager = \OC::$server->get(DetailManager::class);
+			$details = $detailManager->getRenderedDetails();
 			$file->putContent($details);
 		} catch (\Exception $e) {
 			$this->logger->warning('Could not create file "' . $filename . '" to store generated report.', [
