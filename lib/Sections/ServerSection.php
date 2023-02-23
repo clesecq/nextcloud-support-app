@@ -346,24 +346,8 @@ class ServerSection extends Section {
 		return $configs;
 	}
 
-	private function getBrowser() {
-		$browser = @get_browser(null, true);
-		$browserString = '';
-		if ($browser) {
-			if (array_key_exists('browser', $browser)) {
-				$browserString .= $browser['browser'] . ' ';
-			}
-			if (array_key_exists('version', $browser)) {
-				$browserString .= $browser['version'] . ' ';
-			}
-			if (array_key_exists('plattform', $browser)) {
-				$browserString .= $browser['plattform'] . ' ';
-			}
-		}
-		if (empty($browserString)) {
-			return $_SERVER['HTTP_USER_AGENT'] ?? 'unknown';
-		}
-		return $browserString;
+	private function getBrowser(): string {
+		return $_SERVER['HTTP_USER_AGENT'] ?? 'unknown';
 	}
 
 	private function getUserBackendInfo() {
