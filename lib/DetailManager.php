@@ -23,8 +23,16 @@
 
 namespace OCA\Support;
 
+use OCA\Support\Sections\ServerSection;
+
 class DetailManager {
 	private $sections = [];
+	private $detailManager;
+
+	public function __construct(ServerSection $serverSection) {
+		// Register core details that are used in every report
+		$this->addSection($serverSection);
+	}
 
 	public function createSection($identifier, $title, $order = 0) {
 		$section = new Section($identifier, $title, $order);

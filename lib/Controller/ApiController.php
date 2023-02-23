@@ -49,8 +49,6 @@ class ApiController extends Controller {
 	private $urlGenerator;
 	/** @var SubscriptionService */
 	private $subscriptionService;
-	/** @var DetailManager */
-	private $detailManager;
 	/** @var ServerSection */
 	private $serverSection;
 	/** @var ILogger */
@@ -73,8 +71,6 @@ class ApiController extends Controller {
 		IRequest $request,
 		IURLGenerator $urlGenerator,
 		SubscriptionService $subscriptionService,
-		DetailManager $detailManager,
-		ServerSection $serverSection,
 		IRootFolder $rootFolder,
 		IUserSession $userSession,
 		ILogger $logger,
@@ -87,17 +83,12 @@ class ApiController extends Controller {
 
 		$this->urlGenerator = $urlGenerator;
 		$this->subscriptionService = $subscriptionService;
-		$this->detailManager = $detailManager;
-		$this->serverSection = $serverSection;
 		$this->logger = $logger;
 		$this->l10n = $l10n;
 		$this->shareManager = $shareManager;
 		$this->random = $random;
 		$this->userId = $userSession->getUser()->getUID();
 		$this->eventDispatcher = $eventDispatcher;
-
-		// Register core details that are used in every report
-		$this->detailManager->addSection($this->serverSection);
 
 		$this->userFolder = $rootFolder->getUserFolder($this->userId);
 	}
@@ -135,7 +126,8 @@ class ApiController extends Controller {
 
 		try {
 			$file = $directory->newFile($filename);
-			$details = $this->detailManager->getRenderedDetails();
+			$detailManager = \OC::$server->get(DetailManager::class);
+			$details = $detailManager->getRenderedDetails();
 			$file->putContent($details);
 		} catch (\Exception $e) {
 			$this->logger->logException($e, ['app' => 'support', 'message' => 'Could not create file "' . $filename . '" to store generated report.', 'level' => ILogger::WARN]);

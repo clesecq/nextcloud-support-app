@@ -29,7 +29,6 @@ namespace OCA\Support;
  * @package OCA\IssueTemplate
  */
 interface ISection {
-
 	/**
 	 * @return string
 	 */

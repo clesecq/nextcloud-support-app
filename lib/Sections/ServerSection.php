@@ -89,7 +89,7 @@ class ServerSection extends Section {
 		$this->createDetail('List of activated apps', $this->renderAppList(), IDetail::TYPE_COLLAPSIBLE_PREFORMAT);
 
 		$this->createDetail('Configuration (config/config.php)', print_r(json_encode($this->getConfig(), JSON_PRETTY_PRINT), true), IDetail::TYPE_COLLAPSIBLE_PREFORMAT);
-		$this->createDetail('Cron Configuration', $this->getCronConfig());
+		$this->createDetail('Cron Configuration', print_r($this->getCronConfig(), true));
 
 		$externalStorageEnabled = $this->appManager->isEnabledForUser('files_external');
 		$this->createDetail('External storages', $externalStorageEnabled ? 'yes' : 'files_external is disabled');
@@ -370,7 +370,7 @@ class ServerSection extends Section {
 			}
 		}
 		if (empty($browserString)) {
-			return $_SERVER['HTTP_USER_AGENT'];
+			return $_SERVER['HTTP_USER_AGENT'] ?? 'unknown';
 		}
 		return $browserString;
 	}

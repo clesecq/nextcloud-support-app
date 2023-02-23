@@ -24,6 +24,9 @@
 	<background-jobs>
 		<job>OCA\Support\BackgroundJobs\CheckSubscription</job>
 	</background-jobs>
+	<commands>
+		<command>OCA\Support\Command\SystemReport</command>
+	</commands>
 	<repair-steps>
 		<post-migration>
 			<step>OCA\Support\Repair\SwitchUpdaterServer</step>
