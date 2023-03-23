@@ -110,7 +110,7 @@ class ServerSection extends Section {
 		$this->createDetail('Browser', $this->getBrowser());
 	}
 	private function getWebserver() {
-		return $_SERVER['SERVER_SOFTWARE'] . ' (' . PHP_SAPI . ')';
+		return ($_SERVER['SERVER_SOFTWARE'] ?? 'Unknown') . ' (' . PHP_SAPI . ')';
 	}
 
 	private function getNextcloudVersion() {
