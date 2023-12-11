@@ -58,13 +58,14 @@ class ServerSection extends Section {
 		IDBConnection $connection,
 		IClientService $clientService,
 		IUserManager $userManager,
-		LoggerInterface $logger
+		LoggerInterface $logger,
+		SystemConfig $systemConfig,
 	) {
 		parent::__construct('server-detail', 'Server configuration detail');
 		$this->config = $config;
 		$this->checker = $checker;
 		$this->appManager = $appManager;
-		$this->systemConfig = \OC::$server->query('SystemConfig');
+		$this->systemConfig = $systemConfig;
 		$this->connection = $connection;
 		$this->clientService = $clientService;
 		$this->userManager = $userManager;

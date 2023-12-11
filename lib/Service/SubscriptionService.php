@@ -27,7 +27,7 @@ use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\RequestException;
 use OC\User\Backend;
 use OCP\Http\Client\IClientService;
-use OCP\IAppConfig;
+use OCP\ICacheFactory;
 use OCP\IConfig;
 use OCP\IGroupManager;
 use OCP\IURLGenerator;
@@ -71,7 +71,7 @@ class SubscriptionService {
 		IGroupManager $groupManager,
 		IMailer $mailer,
 		IFactory $l10nFactory,
-		private IAppConfig $appConfig
+		private ICacheFactory $cacheFactory,
 	) {
 		$this->config = $config;
 		$this->clientService = $clientService;
@@ -177,7 +177,6 @@ class SubscriptionService {
 						'instanceId' => $this->config->getSystemValue('instanceid', ''),
 						'userCount' => $userCount,
 						'activeUserCount' => $activeUserCount,
-						'apps' => $this->getAppsDetails(),
 						'version' => implode('.', \OCP\Util::getVersion()),
 					],
 					'timeout' => $fast ? 10 : 30,
@@ -220,6 +219,11 @@ class SubscriptionService {
 				$notification->setApp('support')
 					->setSubject('subscription_info');
 				$this->notifications->markProcessed($notification);
+
+				// hide push fair use warning
+				$cacheNotifications = $this->cacheFactory->createDistributed('notifications');
+				$cacheNotifications->remove('push_fair_use');
+
 				return;
 			}
 
@@ -676,51 +680,5 @@ class SubscriptionService {
 
 		$message->useTemplate($emailTemplate);
 		$this->mailer->send($message);
-	}
-
-
-	/**
-	 * return details about installed apps
-	 *
-	 *  [
-	 *    appId => [
-	 *      'enabled' => string,
-	 *      'version' => string
-	 *    ]
-	 * ]
-	 *
-	 * 'enabled' can be:
-	 *     'disabled', if app is disabled
-	 *     'enabled', if app is enabled
-	 *     'group-limited', if app is limited to groups
-	 *     'invalid', if stored value does not fit previous condition
-	 *
-	 * @return array<string, array<string, string>>
-	 */
-	private function getAppsDetails(): array {
-		$enabled = $this->appConfig->getValues(false, 'enabled');
-		$installed = $this->appConfig->getValues(false, 'installed_version');
-
-		/** @var array<string, array<string, string>> $details */
-		$details = [];
-		foreach ($enabled as $appId => $enabledStatus) {
-			$enabledFlag = 'invalid';
-			try {
-				$enabledFlag = match ($enabledStatus) {
-					'no' => 'disabled',
-					'yes' => 'enabled',
-					default => (is_array(json_decode($enabledStatus, flags: JSON_THROW_ON_ERROR))) ? 'group-limited' : $enabledFlag
-				};
-			} catch (\JsonException) {
-			}
-
-			$details[$appId] =
-				[
-					'enabled' => $enabledFlag,
-					'version' => $installed[$appId]
-				];
-		}
-
-		return $details;
 	}
 }
