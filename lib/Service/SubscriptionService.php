@@ -705,8 +705,8 @@ class SubscriptionService {
 	 * @return array<string, array<string, string>>
 	 */
 	private function getAppsDetails(): array {
-		$enabled = $this->appConfig->getValues(false, 'enabled');
-		$installed = $this->appConfig->getValues(false, 'installed_version');
+		$enabled = $this->appConfig->searchValues('enabled');
+		$installed = $this->appConfig->searchValues('installed_version');
 
 		/** @var array<string, array<string, string>> $details */
 		$details = [];
@@ -721,11 +721,10 @@ class SubscriptionService {
 			} catch (\JsonException) {
 			}
 
-			$details[$appId] =
-				[
-					'enabled' => $enabledFlag,
-					'version' => $installed[$appId]
-				];
+			$details[$appId] = [
+				'enabled' => $enabledFlag,
+				'version' => $installed[$appId] ?? 'missing',
+			];
 		}
 
 		return $details;
