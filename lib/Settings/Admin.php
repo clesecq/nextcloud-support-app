@@ -170,6 +170,8 @@ class Admin implements IDelegatedSettings {
 				'activeUserCount' => $activeUserCount,
 				'version' => implode('.', \OCP\Util::getVersion())
 			],
+
+			'subscriptionEndDate' => $subscriptionEndDate->format('Y-m-d'),
 		];
 
 		return new TemplateResponse('support', 'admin', $params);

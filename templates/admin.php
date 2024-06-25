@@ -60,6 +60,9 @@ if ($_['showSubscriptionDetails']) {
 						<?php p($l->t('Subscription key:')); ?> <pre><?php p($_['subscriptionKey']); ?></pre>
 					</li>
 					<li>
+						<?php p($l->t('Expiration date: ') . $_['subscriptionEndDate']); ?>
+					</li>
+					<li>
 						<?php
 						if ($_['validSubscription']) {
 							p($l->t('Expires in: '));
