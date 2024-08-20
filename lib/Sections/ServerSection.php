@@ -70,6 +70,9 @@ class ServerSection extends Section {
 		$this->clientService = $clientService;
 		$this->userManager = $userManager;
 		$this->logger = $logger;
+	}
+
+	public function getDetails(): array {
 		$this->createDetail('Operating system', $this->getOsVersion());
 		$this->createDetail('Webserver', $this->getWebserver());
 		$this->createDetail('Database', $this->getDatabaseInfo());
@@ -100,7 +103,10 @@ class ServerSection extends Section {
 		}
 
 		$this->createDetail('Browser', $this->getBrowser());
+
+		return parent::getDetails();
 	}
+
 	private function getWebserver() {
 		return ($_SERVER['SERVER_SOFTWARE'] ?? 'Unknown') . ' (' . PHP_SAPI . ')';
 	}
@@ -429,7 +435,7 @@ class ServerSection extends Section {
 			$output .= ' * no custom server configured' . PHP_EOL;
 		} else {
 			foreach ($servers['servers'] as $server) {
-				$output .= ' * ' . $server['server'] . ' - ' . $this->getHPBVersion($server['server']) . PHP_EOL;
+				$output .= ' * ' . $server['server'] . ' - ' . $this->getTalkComponentVersion($server['server']) . PHP_EOL;
 			}
 		}
 
@@ -449,14 +455,14 @@ class ServerSection extends Section {
 			$output .= ' * no recording server configured' . PHP_EOL;
 		} else {
 			foreach ($servers['servers'] as $server) {
-				$output .= ' * ' . $server['server'] . ' - ' . $this->getHPBVersion($server['server']) . PHP_EOL;
+				$output .= ' * ' . $server['server'] . ' - ' . $this->getTalkComponentVersion($server['server']) . PHP_EOL;
 			}
 		}
 
 		return $output;
 	}
 
-	private function getHPBVersion(string $url): string {
+	private function getTalkComponentVersion(string $url): string {
 		$url = rtrim($url, '/');
 
 		if (strpos($url, 'wss://') === 0) {
@@ -483,7 +489,7 @@ class ServerSection extends Section {
 				return 'error';
 			}
 
-			return $data['version'];
+			return (string) $data['version'];
 		} catch (\Exception $e) {
 			return 'error: ' . $e->getMessage();
 		}
