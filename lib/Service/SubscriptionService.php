@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2018 Morris Jobke <hey@morrisjobke.de>
  *
@@ -48,45 +50,27 @@ class SubscriptionService {
 	public const THRESHOLD_MEDIUM = 500;
 	public const THRESHOLD_LARGE = 1000;
 
-	private IConfig $config;
-	private IClientService $clientService;
-	private LoggerInterface $log;
-	private IUserManager $userManager;
 	private int $userCount = -1;
 	private int $activeUserCount = -1;
-	private IManager $notifications;
-	private IURLGenerator $urlGenerator;
-	private IGroupManager $groupManager;
-	private IMailer $mailer;
-	private IFactory $l10nFactory;
 
-	private $subscriptionInfoCache = null;
+	private ?array $subscriptionInfoCache = null;
 
 	public function __construct(
-		IConfig $config,
-		IClientService $clientService,
-		LoggerInterface $log,
-		IUserManager $userManager,
-		IManager $notifications,
-		IURLGenerator $urlGenerator,
-		IGroupManager $groupManager,
-		IMailer $mailer,
-		IFactory $l10nFactory,
-		private ICacheFactory $cacheFactory,
-		private IAppConfig $appConfig
+		protected readonly IConfig $config,
+		protected readonly IClientService $clientService,
+		protected readonly LoggerInterface $log,
+		protected readonly IUserManager $userManager,
+		protected readonly IManager $notifications,
+		protected readonly IURLGenerator $urlGenerator,
+		protected readonly IGroupManager $groupManager,
+		protected readonly IMailer $mailer,
+		protected readonly IFactory $l10nFactory,
+		protected readonly ICacheFactory $cacheFactory,
+		protected readonly IAppConfig $appConfig
 	) {
-		$this->config = $config;
-		$this->clientService = $clientService;
-		$this->log = $log;
-		$this->userManager = $userManager;
-		$this->notifications = $notifications;
-		$this->urlGenerator = $urlGenerator;
-		$this->groupManager = $groupManager;
-		$this->mailer = $mailer;
-		$this->l10nFactory = $l10nFactory;
 	}
 
-	public function setSubscriptionKey(string $subscriptionKey) {
+	public function setSubscriptionKey(string $subscriptionKey): void {
 		if (!preg_match('!^[a-zA-Z0-9-]{10,250}$!', $subscriptionKey)) {
 			$this->config->setAppValue('support', 'last_error', self::ERROR_INVALID_SUBSCRIPTION_KEY);
 			return;
@@ -147,7 +131,7 @@ class SubscriptionService {
 		return $this->activeUserCount;
 	}
 
-	public function renewSubscriptionInfo(bool $fast) {
+	public function renewSubscriptionInfo(bool $fast): void {
 		$hasInternetConnection = $this->config->getSystemValue('has_internet_connection', true);
 
 		if (!$hasInternetConnection) {
@@ -345,7 +329,7 @@ class SubscriptionService {
 		}
 	}
 
-	private function handleNoSubscription(string $instanceSize) {
+	private function handleNoSubscription(string $instanceSize): void {
 		$currentTime = time();
 		$installTime = (int)$this->config->getAppValue('core', 'installedat', $currentTime);
 
@@ -403,7 +387,7 @@ class SubscriptionService {
 		}
 	}
 
-	private function handleOverLimit(string $accountManager, string $accountManagerEmail, string $accountManagerPhone) {
+	private function handleOverLimit(string $accountManager, string $accountManagerEmail, string $accountManagerPhone): void {
 		$currentTime = time();
 
 		$lastNotificationTime = (int)$this->config->getAppValue('support', 'last_over_limit_notification', 0);
@@ -460,7 +444,7 @@ class SubscriptionService {
 		}
 	}
 
-	private function handleExpired(string $accountManager, string $accountManagerEmail, string $accountManagerPhone) {
+	private function handleExpired(string $accountManager, string $accountManagerEmail, string $accountManagerPhone): void {
 		$currentTime = time();
 
 		$lastNotificationTime = (int)$this->config->getAppValue('support', 'last_expired_notification', 0);
@@ -517,7 +501,7 @@ class SubscriptionService {
 		}
 	}
 
-	private function sendNoSubscriptionEmail(IUser $user) {
+	private function sendNoSubscriptionEmail(IUser $user): void {
 		// TODO what about enforced language?
 		$language = $this->config->getUserValue($user->getUID(), 'core', 'lang', 'en');
 		$l = $this->l10nFactory->get('support', $language);
@@ -581,7 +565,7 @@ class SubscriptionService {
 		$this->mailer->send($message);
 	}
 
-	private function sendOverLimitEmail(IUser $user, string $accountManager, string $accountManagerEmail, string $accountManagerPhone) {
+	private function sendOverLimitEmail(IUser $user, string $accountManager, string $accountManagerEmail, string $accountManagerPhone): void {
 		// TODO what about enforced language?
 		$language = $this->config->getUserValue($user->getUID(), 'core', 'lang', 'en');
 		$l = $this->l10nFactory->get('support', $language);
@@ -633,7 +617,7 @@ class SubscriptionService {
 		$this->mailer->send($message);
 	}
 
-	private function sendExpiredEmail(IUser $user, string $accountManager, string $accountManagerEmail, string $accountManagerPhone) {
+	private function sendExpiredEmail(IUser $user, string $accountManager, string $accountManagerEmail, string $accountManagerPhone): void {
 		// TODO what about enforced language?
 		$language = $this->config->getUserValue($user->getUID(), 'core', 'lang', 'en');
 		$l = $this->l10nFactory->get('support', $language);

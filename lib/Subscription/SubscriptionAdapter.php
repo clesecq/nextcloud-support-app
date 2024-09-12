@@ -31,8 +31,8 @@ use OCP\Support\Subscription\ISupportedApps;
 
 class SubscriptionAdapter implements ISubscription, ISupportedApps {
 	public function __construct(
-		private SubscriptionService $subscriptionService,
-		private IConfig $config,
+		private readonly SubscriptionService $subscriptionService,
+		private readonly IConfig $config,
 	) {
 	}
 
@@ -149,7 +149,7 @@ class SubscriptionAdapter implements ISubscription, ISupportedApps {
 		if ($nextcloudVersion >= 24) {
 			$filesSubscription[] = 'files_lock';
 		}
-		
+
 		if ($nextcloudVersion >= 22) {
 			$filesSubscription[] = 'approval';
 			$filesSubscription[] = 'contacts';

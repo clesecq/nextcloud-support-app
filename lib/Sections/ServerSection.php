@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2017 Julius Härtl <jus@bitgrid.net>
  *
@@ -42,34 +44,17 @@ use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Output\BufferedOutput;
 
 class ServerSection extends Section {
-	private IConfig $config;
-	private Checker $checker;
-	private IAppManager $appManager;
-	private SystemConfig $systemConfig;
-	private IDBConnection $connection;
-	private IClientService $clientService;
-	private IUserManager $userManager;
-	private LoggerInterface $logger;
-
 	public function __construct(
-		IConfig $config,
-		Checker $checker,
-		IAppManager $appManager,
-		IDBConnection $connection,
-		IClientService $clientService,
-		IUserManager $userManager,
-		LoggerInterface $logger,
-		SystemConfig $systemConfig,
+		protected readonly IConfig $config,
+		protected readonly Checker $checker,
+		protected readonly IAppManager $appManager,
+		protected readonly IDBConnection $connection,
+		protected readonly IClientService $clientService,
+		protected readonly IUserManager $userManager,
+		protected readonly LoggerInterface $logger,
+		protected readonly SystemConfig $systemConfig,
 	) {
 		parent::__construct('server-detail', 'Server configuration detail');
-		$this->config = $config;
-		$this->checker = $checker;
-		$this->appManager = $appManager;
-		$this->systemConfig = $systemConfig;
-		$this->connection = $connection;
-		$this->clientService = $clientService;
-		$this->userManager = $userManager;
-		$this->logger = $logger;
 	}
 
 	public function getDetails(): array {
@@ -107,21 +92,21 @@ class ServerSection extends Section {
 		return parent::getDetails();
 	}
 
-	private function getWebserver() {
+	private function getWebserver(): string {
 		return ($_SERVER['SERVER_SOFTWARE'] ?? 'Unknown') . ' (' . PHP_SAPI . ')';
 	}
 
-	private function getNextcloudVersion() {
+	private function getNextcloudVersion(): string {
 		return \OC_Util::getHumanVersion() . ' - ' . $this->config->getSystemValue('version');
 	}
-	private function getOsVersion() {
+	private function getOsVersion(): string {
 		return function_exists('php_uname') ? php_uname('s') . ' ' . php_uname('r') . ' ' . php_uname('v') . ' ' . php_uname('m') : PHP_OS;
 	}
-	private function getPhpVersion() {
+	private function getPhpVersion(): string {
 		return PHP_VERSION . "\n\nModules loaded: " . implode(', ', get_loaded_extensions());
 	}
 
-	protected function getDatabaseInfo() {
+	protected function getDatabaseInfo(): string {
 		return $this->config->getSystemValue('dbtype') . ' ' . $this->getDatabaseVersion();
 	}
 
@@ -133,7 +118,7 @@ class ServerSection extends Section {
 	 * @author Joas Schilling <coding@schilljs.com>
 	 * @license AGPL-3.0
 	 */
-	private function getDatabaseVersion() {
+	private function getDatabaseVersion(): string {
 		switch ($this->config->getSystemValue('dbtype')) {
 			case 'sqlite':
 			case 'sqlite3':
@@ -209,7 +194,7 @@ class ServerSection extends Section {
 		return 'unknown';
 	}
 
-	private function renderAppList() {
+	private function renderAppList(): string {
 		$apps = $this->getAppList();
 		$result = "Enabled:\n";
 		foreach ($apps['enabled'] as $name => $version) {
@@ -230,7 +215,7 @@ class ServerSection extends Section {
 	/**
 	 * @return string[][]
 	 */
-	private function getAppList() {
+	private function getAppList(): array {
 		$apps = \OC_App::getAllApps();
 		$enabledApps = $disabledApps = [];
 		$versions = \OC_App::getAppVersions();
@@ -255,11 +240,11 @@ class ServerSection extends Section {
 		return $apps;
 	}
 
-	protected function getEncryptionInfo() {
+	protected function getEncryptionInfo(): string {
 		return $this->config->getAppValue('core', 'encryption_enabled', 'no');
 	}
 
-	protected function getExternalStorageInfo() {
+	protected function getExternalStorageInfo(): string {
 		$globalService = \OC::$server->query(GlobalStoragesService::class);
 		$mounts = $globalService->getStorageForAllUsers();
 
@@ -341,7 +326,7 @@ class ServerSection extends Section {
 		return $output->fetch();
 	}
 
-	private function getConfig() {
+	private function getConfig(): array {
 		$keys = $this->systemConfig->getKeys();
 		$configs = [];
 		foreach ($keys as $key) {
@@ -357,7 +342,7 @@ class ServerSection extends Section {
 		return $_SERVER['HTTP_USER_AGENT'] ?? 'unknown';
 	}
 
-	private function getUserBackendInfo() {
+	private function getUserBackendInfo(): string {
 		$backends = $this->userManager->getBackends();
 
 		$output = PHP_EOL;
@@ -368,7 +353,7 @@ class ServerSection extends Section {
 		return $output;
 	}
 
-	private function isLDAPEnabled() {
+	private function isLDAPEnabled(): bool {
 		$backends = $this->userManager->getBackends();
 
 		foreach ($backends as $backend) {
@@ -380,11 +365,11 @@ class ServerSection extends Section {
 		return false;
 	}
 
-	private function isTalkEnabled() {
+	private function isTalkEnabled(): bool {
 		return $this->appManager->isEnabledForUser('spreed');
 	}
 
-	private function getTalkInfo() {
+	private function getTalkInfo(): string {
 		$output = PHP_EOL;
 
 		$config = $this->config->getAppValue('spreed', 'stun_servers');
@@ -495,7 +480,7 @@ class ServerSection extends Section {
 		}
 	}
 
-	private function getLDAPInfo() {
+	private function getLDAPInfo(): string {
 		/** @var Helper $helper */
 		$helper = \OC::$server->query(Helper::class);
 

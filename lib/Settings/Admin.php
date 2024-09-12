@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2018 Morris Jobke <hey@morrisjobke.de>
  *
@@ -31,25 +33,16 @@ use OCP\IUserManager;
 use OCP\Settings\IDelegatedSettings;
 
 class Admin implements IDelegatedSettings {
-	private IConfig $config;
-	private IUserManager $userManager;
-	private IURLGenerator $urlGenerator;
-	private SubscriptionService $subscriptionService;
 
-	public function __construct(IConfig $config,
-		IUserManager $userManager,
-		IURLGenerator $urlGenerator,
-		SubscriptionService $subscriptionService) {
-		$this->userManager = $userManager;
-		$this->config = $config;
-		$this->urlGenerator = $urlGenerator;
-		$this->subscriptionService = $subscriptionService;
+	public function __construct(
+		protected readonly IConfig $config,
+		protected readonly IUserManager $userManager,
+		protected readonly IURLGenerator $urlGenerator,
+		protected readonly SubscriptionService $subscriptionService,
+	) {
 	}
 
-	/**
-	 * @return TemplateResponse
-	 */
-	public function getForm() {
+	public function getForm(): TemplateResponse {
 		$userCount = $this->subscriptionService->getUserCount();
 		$activeUserCount = $this->userManager->countSeenUsers();
 
@@ -180,7 +173,7 @@ class Admin implements IDelegatedSettings {
 	/**
 	 * @return string the section ID, e.g. 'sharing'
 	 */
-	public function getSection() {
+	public function getSection(): string {
 		return 'support';
 	}
 
@@ -191,7 +184,7 @@ class Admin implements IDelegatedSettings {
 	 *
 	 * keep the server setting at the top, right after "server settings"
 	 */
-	public function getPriority() {
+	public function getPriority(): int {
 		return 0;
 	}
 
