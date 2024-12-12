@@ -365,7 +365,7 @@ class SubscriptionService {
 			}
 
 			$notification->setDateTime(new \DateTime());
-			$notification->setLink($this->urlGenerator->linkToRoute('settings.AdminSettings.index', ['section' => 'support']));
+			$notification->setLink($this->urlGenerator->linkToRouteAbsolute('settings.AdminSettings.index', ['section' => 'support']));
 			$this->notifications->notify($notification);
 
 			$updateLastNotificationTime = true;
@@ -417,7 +417,7 @@ class SubscriptionService {
 			}
 
 			$notification->setDateTime(new \DateTime());
-			$notification->setLink($this->urlGenerator->linkToRoute('settings.AdminSettings.index', ['section' => 'support']));
+			$notification->setLink($this->urlGenerator->linkToRouteAbsolute('settings.AdminSettings.index', ['section' => 'support']));
 			$this->notifications->notify($notification);
 
 			$updateLastNotificationTime = true;
@@ -474,7 +474,7 @@ class SubscriptionService {
 			}
 
 			$notification->setDateTime(new \DateTime());
-			$notification->setLink($this->urlGenerator->linkToRoute('settings.AdminSettings.index', ['section' => 'support']));
+			$notification->setLink($this->urlGenerator->linkToRouteAbsolute('settings.AdminSettings.index', ['section' => 'support']));
 			$this->notifications->notify($notification);
 
 			$updateLastNotificationTime = true;
@@ -506,7 +506,7 @@ class SubscriptionService {
 		$language = $this->config->getUserValue($user->getUID(), 'core', 'lang', 'en');
 		$l = $this->l10nFactory->get('support', $language);
 
-		$link = $this->urlGenerator->getAbsoluteURL($this->urlGenerator->linkToRoute('settings.AdminSettings.index', ['section' => 'support']));
+		$link = $this->urlGenerator->linkToRouteAbsolute('settings.AdminSettings.index', ['section' => 'support']);
 
 		$message = $this->mailer->createMessage();
 
@@ -570,7 +570,7 @@ class SubscriptionService {
 		$language = $this->config->getUserValue($user->getUID(), 'core', 'lang', 'en');
 		$l = $this->l10nFactory->get('support', $language);
 
-		$link = $this->urlGenerator->getAbsoluteURL($this->urlGenerator->linkToRoute('settings.AdminSettings.index', ['section' => 'support']));
+		$link = $this->urlGenerator->linkToRouteAbsolute('settings.AdminSettings.index', ['section' => 'support']);
 
 		$message = $this->mailer->createMessage();
 
@@ -622,7 +622,7 @@ class SubscriptionService {
 		$language = $this->config->getUserValue($user->getUID(), 'core', 'lang', 'en');
 		$l = $this->l10nFactory->get('support', $language);
 
-		$link = $this->urlGenerator->getAbsoluteURL($this->urlGenerator->linkToRoute('settings.AdminSettings.index', ['section' => 'support']));
+		$link = $this->urlGenerator->linkToRouteAbsolute('settings.AdminSettings.index', ['section' => 'support']);
 
 		$message = $this->mailer->createMessage();
 
