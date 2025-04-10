@@ -668,7 +668,9 @@ class SubscriptionService {
 	 * @return array<string, array<string, string>>
 	 */
 	private function getAppsDetails(): array {
-		$enabled = $this->appConfig->searchValues('enabled', false, IAppConfig::VALUE_BOOL);
+		/** @var array<string, string> */
+		$enabled = $this->appConfig->searchValues('enabled', false, IAppConfig::VALUE_STRING);
+		/** @var array<string, string> */
 		$installed = $this->appConfig->searchValues('installed_version', false, IAppConfig::VALUE_STRING);
 
 		/** @var array<string, array<string, string>> $details */
