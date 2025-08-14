@@ -25,6 +25,8 @@ declare(strict_types=1);
 namespace OCA\Support\Subscription;
 
 use OCA\Support\Service\SubscriptionService;
+use OCP\AppFramework\Services\IAppConfig;
+use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IConfig;
 use OCP\Support\Subscription\ISubscription;
 use OCP\Support\Subscription\ISupportedApps;
@@ -33,6 +35,8 @@ class SubscriptionAdapter implements ISubscription, ISupportedApps {
 	public function __construct(
 		private readonly SubscriptionService $subscriptionService,
 		private readonly IConfig $config,
+		private readonly IAppConfig $appConfig,
+		private readonly ITimeFactory $timeFactory,
 	) {
 	}
 
@@ -40,24 +44,23 @@ class SubscriptionAdapter implements ISubscription, ISupportedApps {
 	 * Indicates if a valid subscription is available
 	 */
 	public function hasValidSubscription(): bool {
-		[
-			$instanceSize,
-			$hasSubscription,
-			$isInvalidSubscription,
-			$isOverLimit,
-			$subscriptionInfo
-		] = $this->subscriptionService->getSubscriptionInfo();
+		try {
+			$endDate = $this->appConfig->getAppValueString('end_date');
+		} catch (\Throwable) {
+			return false;
+		}
 
-		return !$isInvalidSubscription;
+		return $this->subscriptionNotExpired($endDate);
 	}
 
 	private function subscriptionNotExpired(string $endDate): bool {
-		$subscriptionEndDate = new \DateTime($endDate);
-		$now = new \DateTime();
-		if ($now >= $subscriptionEndDate) {
+		if ($endDate === '' || $endDate === 'now') {
 			return false;
 		}
-		return true;
+
+		$subscriptionEndDate = $this->timeFactory->getDateTime($endDate);
+		$now = $this->timeFactory->getDateTime();
+		return $now < $subscriptionEndDate;
 	}
 
 	/**
@@ -205,8 +208,11 @@ class SubscriptionAdapter implements ISubscription, ISupportedApps {
 	 * @since 17.0.0
 	 */
 	public function hasExtendedSupport(): bool {
-		$subscriptionInfo = $this->subscriptionService->getMinimalSubscriptionInfo();
-		return $subscriptionInfo['extendedSupport'] ?? false;
+		try {
+			return $this->appConfig->getAppValueBool('extended_support');
+		} catch (\Throwable) {
+			return false;
+		}
 	}
 
 	/**

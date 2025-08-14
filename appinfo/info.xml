@@ -24,6 +24,7 @@
 	<repair-steps>
 		<post-migration>
 			<step>OCA\Support\Repair\SwitchUpdaterServer</step>
+			<step>OCA\Support\Repair\MigrateLazyAppConfig</step>
 		</post-migration>
 	</repair-steps>
 	<commands>

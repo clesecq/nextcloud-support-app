@@ -177,7 +177,8 @@ class SubscriptionService {
 				$this->log->info('Subscription info successfully fetched');
 				$this->config->setAppValue('support', 'subscription_key', $subscriptionKey);
 				$this->config->setAppValue('support', 'last_check', time());
-				$this->config->setAppValue('support', 'last_response', json_encode($body));
+				$this->appConfig->setValueArray('support', 'last_response', $body, lazy: true);
+
 				$this->config->deleteAppValue('support', 'last_error');
 
 				$currentUpdaterServer = $this->config->getSystemValue('updater.server.url', 'https://updates.nextcloud.com/updater_server/');
@@ -295,8 +296,12 @@ class SubscriptionService {
 	}
 
 	public function getMinimalSubscriptionInfo(): ?array {
-		$lastResponse = $this->config->getAppValue('support', 'last_response', '');
-		return json_decode($lastResponse, true);
+		$subscriptionInfo = $this->appConfig->getValueArray('support', 'last_response', lazy: true);
+		if (empty($subscriptionInfo)) {
+			return null;
+		}
+
+		return $subscriptionInfo;
 	}
 
 	public function checkSubscription() {
