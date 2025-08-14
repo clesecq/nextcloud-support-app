@@ -85,6 +85,12 @@
 	text-align: center;
 }
 
+.section h2,
+.section p {
+	/* Override max-width set in server CSS for settings. */
+	max-width: 100% !important;
+}
+
 .section.system-information img {
 	filter: var(--background-invert-if-dark);
 }
