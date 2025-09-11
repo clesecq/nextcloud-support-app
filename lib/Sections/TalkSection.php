@@ -9,9 +9,11 @@ declare(strict_types=1);
 
 namespace OCA\Support\Sections;
 
+use OCA\Support\IDetail;
 use OCA\Support\Section;
 use OCP\App\IAppManager;
 use OCP\Http\Client\IClientService;
+use OCP\IAppConfig;
 use OCP\IConfig;
 
 class TalkSection extends Section {
@@ -19,12 +21,14 @@ class TalkSection extends Section {
 		protected readonly IConfig $config,
 		protected readonly IAppManager $appManager,
 		protected readonly IClientService $clientService,
+		protected readonly IAppConfig $appConfig,
 	) {
 		parent::__construct('talk', 'Talk');
 	}
 
 	public function getDetails(): array {
 		$this->createDetail('Talk configuration', $this->getTalkInfo());
+		$this->createDetail('Talk app configuration', $this->getTalkAppConfiguration(), IDetail::TYPE_COLLAPSIBLE_PREFORMAT);
 
 		return parent::getDetails();
 	}
@@ -109,6 +113,11 @@ class TalkSection extends Section {
 		}
 
 		return $output;
+	}
+
+	private function getTalkAppConfiguration(): string {
+		$spreedConfig = $this->appConfig->getAllValues('spreed', filtered: true);
+		return json_encode($spreedConfig, JSON_PRETTY_PRINT) . PHP_EOL;
 	}
 
 	private function getTalkComponentVersion(string $url): string {

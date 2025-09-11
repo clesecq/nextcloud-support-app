@@ -285,6 +285,10 @@ class SubscriptionService {
 			return;
 		}
 
+		if ($this->appConfig->getValueBool('support', 'disable_subscription_emails')) {
+			return;
+		}
+
 		[
 			$instanceSize,
 			$hasSubscription,
