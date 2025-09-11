@@ -178,6 +178,8 @@ class SubscriptionService {
 				$this->config->setAppValue('support', 'subscription_key', $subscriptionKey);
 				$this->config->setAppValue('support', 'last_check', time());
 				$this->appConfig->setValueArray('support', 'last_response', $body, lazy: true);
+				$this->appConfig->setValueString('support', 'end_date', $body['endDate'] ?? '');
+				$this->appConfig->setValueBool('support', 'extended_support', $body['extendedSupport'] ?? false);
 
 				$this->config->deleteAppValue('support', 'last_error');
 
@@ -257,23 +259,12 @@ class SubscriptionService {
 			}
 		}
 
-		$subscriptionInfo = $this->getMinimalSubscriptionInfo();
+		$subscriptionInfo = $this->getLastResponseSubscriptionInfo();
 
 		$now = new \DateTime();
 		$subscriptionEndDate = new \DateTime($subscriptionInfo['endDate'] ?? 'now');
-		if ($now > $subscriptionEndDate) {
-			$years = 0;
-			$months = 0;
-			$days = 0;
-		} else {
-			$diff = $now->diff($subscriptionEndDate);
-			$years = (int)$diff->format('%y');
-			$months = $years * 12 + (int)$diff->format('%m');
-			$days = $months * 30 + (int)$diff->format('%d');
-		}
-
 		$hasSubscription = $subscriptionInfo !== null;
-		$isInvalidSubscription = ($years + $months + $days) <= 0;
+		$isInvalidSubscription = $now > $subscriptionEndDate;
 		$allowedUsersCount = $subscriptionInfo['amountOfUsers'] ?? 0;
 		$onlyCountActiveUsers = $subscriptionInfo['onlyCountActiveUsers'] ?? false;
 		if ($allowedUsersCount === -1) {
@@ -295,7 +286,7 @@ class SubscriptionService {
 		return $this->subscriptionInfoCache;
 	}
 
-	public function getMinimalSubscriptionInfo(): ?array {
+	public function getLastResponseSubscriptionInfo(): ?array {
 		$subscriptionInfo = $this->appConfig->getValueArray('support', 'last_response', lazy: true);
 		if (empty($subscriptionInfo)) {
 			return null;
@@ -304,10 +295,14 @@ class SubscriptionService {
 		return $subscriptionInfo;
 	}
 
-	public function checkSubscription() {
+	public function checkSubscription(): void {
 		$hasInternetConnection = $this->config->getSystemValue('has_internet_connection', true);
 
 		if (!$hasInternetConnection) {
+			return;
+		}
+
+		if ($this->appConfig->getValueBool('support', 'disable_subscription_emails')) {
 			return;
 		}
 

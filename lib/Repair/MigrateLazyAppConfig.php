@@ -24,6 +24,13 @@ class MigrateLazyAppConfig implements IRepairStep {
 
 	public function run(IOutput $output): void {
 		$this->appConfig->updateLazy('support', 'last_response', true);
+		
+		// Copy often used values to non-lazy (also done when fetching)
+		$data = $this->appConfig->getValueArray('support', 'last_response');
+		if (!empty($data)) {
+			$this->appConfig->setValueString('support', 'end_date', $data['endDate'] ?? '');
+			$this->appConfig->setValueBool('support', 'extended_support', $data['extendedSupport'] ?? false);
+		}
 
 		// if more config values needs to be switched to lazy, just add them here
 	}
