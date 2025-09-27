@@ -27,6 +27,7 @@ class Capabilities implements ICapability {
 	 *   },
 	 * }
 	 */
+	#[\Override]
 	public function getCapabilities(): array {
 		if (!$this->adapter->hasValidSubscription()) {
 			return [];

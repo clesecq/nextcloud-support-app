@@ -19,19 +19,22 @@ class Section implements ISection {
 	) {
 	}
 
+	#[\Override]
 	public function getIdentifier(): string {
 		return $this->identifier;
 	}
 
+	#[\Override]
 	public function getTitle(): string {
 		return $this->title;
 	}
 
+	#[\Override]
 	public function addDetail(IDetail $details): void {
 		$this->details[] = $details;
 	}
 
-	/** @inheritdoc */
+	#[\Override]
 	public function getDetails(): array {
 		return $this->details;
 	}
