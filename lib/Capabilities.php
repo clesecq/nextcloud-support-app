@@ -36,7 +36,7 @@ class Capabilities implements ICapability {
 		return [
 			'support' => [
 				'hasValidSubscription' => true,
-				'desktopEnterpriseChannel' => $this->config->getSystemValueString('desktopEnterpriseChannel', 'stable'),
+				'desktopEnterpriseChannel' => $this->config->getSystemValueString('desktopEnterpriseChannel', 'enterprise'),
 			],
 		];
 	}
