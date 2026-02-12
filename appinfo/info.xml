@@ -9,7 +9,7 @@
 	<name>Support</name>
 	<summary>Getting support and help for your Nextcloud</summary>
 	<description>The support app covers you with direct access to help and consulting resources, dedicated contact options to your account manager and an overview of your enterprise subscription.</description>
-	<version>4.0.0-dev.0</version>
+	<version>4.0.0</version>
 	<licence>agpl</licence>
 	<author>Morris Jobke</author>
 	<namespace>Support</namespace>
