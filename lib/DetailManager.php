@@ -13,6 +13,7 @@ use OCA\Support\Sections\LdapSection;
 use OCA\Support\Sections\PhpInfoSection;
 use OCA\Support\Sections\ServerSection;
 use OCA\Support\Sections\SetupChecksSection;
+use OCA\Support\Sections\SharingSection;
 use OCA\Support\Sections\TalkSection;
 
 class DetailManager {
@@ -21,6 +22,7 @@ class DetailManager {
 	public function __construct(
 		ServerSection $serverSection,
 		SetupChecksSection $setupChecksSection,
+		SharingSection $sharingSection,
 		PhpInfoSection $phpInfoSection,
 		TalkSection $talkSection,
 		LdapSection $ldapSection,
@@ -28,8 +30,8 @@ class DetailManager {
 	) {
 		// Register core details that are used in every report
 		$this->addSection($serverSection);
+		$this->addSection($sharingSection);
 		$this->addSection($setupChecksSection);
-		$this->addSection($phpInfoSection);
 		if ($talkSection->isTalkEnabled()) {
 			$this->addSection($talkSection);
 		}
@@ -39,6 +41,7 @@ class DetailManager {
 		if ($appApiSection->isAppApiEnabled()) {
 			$this->addSection($appApiSection);
 		}
+		$this->addSection($phpInfoSection);
 	}
 
 	public function createSection(string $identifier, string $title, int $order = 0): void {

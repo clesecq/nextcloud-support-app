@@ -8,6 +8,9 @@ declare(strict_types=1);
 
 namespace OCA\Support;
 
+use Symfony\Component\Console\Helper\Table;
+use Symfony\Component\Console\Output\BufferedOutput;
+
 class Section implements ISection {
 	/** @var IDetail[] */
 	private array $details = [];
@@ -43,5 +46,16 @@ class Section implements ISection {
 		$detail = new Detail($this->getIdentifier(), $title, $information, $type);
 		$this->addDetail($detail);
 		return $detail;
+	}
+
+	protected function renderTable(array $headers, array $rows): string {
+		$output = new BufferedOutput();
+
+		$table = new Table($output);
+		$table->setHeaders($headers);
+		$table->setRows($rows);
+		$table->render();
+
+		return $output->fetch();
 	}
 }
