@@ -3,41 +3,57 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-(function($, OC) {
+document.addEventListener('DOMContentLoaded', function() {
+	const generateReportButton = document.getElementById('generate-report-button');
+	const subscriptionKeySection = document.getElementById('subscription-key-section');
+	const subscriptionToggle = document.getElementById('subscription-toggle-subscription-key');
 
-	$(document).ready(function() {
+	subscriptionToggle?.addEventListener('click', function() {
+		subscriptionKeySection.classList.remove('hidden');
+	})
 
-		$('.subscription-toggle-subscription-key').on('click', function(e) {
-			$('#subscription-key-section').removeClass('hidden');
-		});
+	generateReportButton?.addEventListener('click', async function(e) {
+		const reportStatus = document.getElementById('report-status');
 
-		$('#generate-report-button').on('click', function(e) {
-			e.target.disabled = true;
-			var $reportStatus = $('#report-status');
+		e.target.disabled = true;
+		try {
+			reportStatus.innerText = '';
+			reportStatus.classList.add('icon-loading');
 
-			$reportStatus.html('');
-			$reportStatus.addClass('icon-loading');
-			$.post(OC.generateUrl('apps/support/generateSystemReport?forceLanguage=en'))
-				.always(function() {
-					e.target.disabled = false;
-					$reportStatus.removeClass('icon-loading');
-				})
-				.done(function(data) {
-					var link = data.link;
-					var password = data.password;
-					var $link = $('<a>')
-						.attr('href', link)
-						.attr('target', '_blank')
-						.html(link);
+			const response = await window.fetch(
+				window.OC.generateUrl('apps/support/generateSystemReport?forceLanguage=en'),
+				{
+					method: 'POST',
+					headers: {
+						requestToken: OC.requestToken,
+					},
+				},
+			)
+			const { link, password, message } = await response.json();
+			if (!response.ok) {
+				throw new Error(message);
+			}
 
-					$reportStatus.append(t('support', 'Link:') + ' ');
-					$reportStatus.append($link);
-					$reportStatus.append('<br />' + t('support', 'Password:') + ' ' + '<code>' + password + '</code>');
-				})
-				.fail(function(xhr) {
-					var message = xhr.responseJSON.message;
-					$reportStatus.html(t('support', 'Generating system report failed.') + ' ' + message);
-				})
-		});
-	});
-})(jQuery, OC);
+			const downloadLinkElement = document.createElement('a');
+			downloadLinkElement.href = link;
+			downloadLinkElement.target = '_blank';
+			downloadLinkElement.textContent = link;
+
+			const passwordCodeElement = document.createElement('code');
+			passwordCodeElement.textContent = password;
+
+			reportStatus.append(
+				document.createTextNode(t('support', 'Link:') + ' '),
+				downloadLinkElement,
+				document.createElement('br'),
+				document.createTextNode(t('support', 'Password:') + ' '),
+				passwordCodeElement,
+			);
+		} catch (error) {
+			reportStatus.innerHTML = t('support', 'Generating system report failed.') + ' ' + (error?.message || '');
+		} finally {
+			e.target.disabled = false;
+			reportStatus.classList.remove('icon-loading');
+		}
+	})
+})

@@ -120,7 +120,7 @@ input[name='subscriptionKey'] {
 	border-radius: 3px;
 }
 
-.subscription-toggle-subscription-key {
+#subscription-toggle-subscription-key {
 	opacity: .4;
 }
 

@@ -151,7 +151,7 @@ if ($_['showSubscriptionDetails']) {
 					} ?>
 				</ul>
 				<p>
-					<a href="#subscription-key-section" class="subscription-toggle-subscription-key"><?php p($l->t('Update subscription key')); ?></a>
+					<a href="#subscription-key-section" id="subscription-toggle-subscription-key"><?php p($l->t('Update subscription key')); ?></a>
 				</p>
 			</div>
 			<div>
