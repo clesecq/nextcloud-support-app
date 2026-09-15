@@ -43,10 +43,10 @@ class SwitchUpdaterServer implements IRepairStep {
 		 *  - there is a subscription key set
 		 *  - the subscription key is halfway sane
 		 */
-		if ($currentUpdaterServer === 'https://updates.nextcloud.com/updater_server/' &&
-			$this->subscriptionRegistry->delegateHasValidSubscription() &&
-			$subscriptionKey !== '' &&
-			preg_match('!^[a-zA-Z0-9-]{10,250}$!', $subscriptionKey)
+		if ($currentUpdaterServer === 'https://updates.nextcloud.com/updater_server/'
+			&& $this->subscriptionRegistry->delegateHasValidSubscription()
+			&& $subscriptionKey !== ''
+			&& preg_match('!^[a-zA-Z0-9-]{10,250}$!', $subscriptionKey)
 		) {
 			$this->config->setSystemValue('updater.server.url', 'https://updates.nextcloud.com/customers/' . $subscriptionKey . '/');
 		}

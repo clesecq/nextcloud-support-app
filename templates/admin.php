@@ -440,7 +440,6 @@ if (!$_['showSubscriptionDetails']) {
 				$l->t('Follow us on Mastodon'),
 				$l->t('Check out our blog'),
 				$l->t('Subscribe to our newsletter'),
-
 			],
 			'{facebookopen}<img width="50" height="50" src="{facebookimage}" title="{facebooktext}" alt="{facebooktext}">{linkclose}
 			{xopen}<img width="50" height="50" src="{ximage}" style="filter: var(--background-invert-if-dark);" title="{xtext}" alt="{xtext}">{linkclose}

@@ -49,7 +49,7 @@ class ApiController extends Controller {
 		protected readonly ISecureRandom $random,
 		protected readonly ITimeFactory $timeFactory,
 		protected readonly ?string $userId,
-		readonly IRootFolder $rootFolder,
+		IRootFolder $rootFolder,
 	) {
 		parent::__construct($appName, $request);
 

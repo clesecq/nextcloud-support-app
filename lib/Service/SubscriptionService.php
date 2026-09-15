@@ -182,11 +182,11 @@ class SubscriptionService {
 				 */
 				if (
 					(
-						$currentUpdaterServer === 'https://updates.nextcloud.com/updater_server/' ||
-						substr($currentUpdaterServer, 0, 40) === 'https://updates.nextcloud.com/customers/'
-					) &&
-					$subscriptionKey !== '' &&
-					preg_match('!^[a-zA-Z0-9-]{10,250}$!', $subscriptionKey)
+						$currentUpdaterServer === 'https://updates.nextcloud.com/updater_server/'
+						|| substr($currentUpdaterServer, 0, 40) === 'https://updates.nextcloud.com/customers/'
+					)
+					&& $subscriptionKey !== ''
+					&& preg_match('!^[a-zA-Z0-9-]{10,250}$!', $subscriptionKey)
 				) {
 					$this->config->setSystemValue('updater.server.url', $newUpdaterServer);
 				}
@@ -527,10 +527,10 @@ class SubscriptionService {
 		$emailTemplate->addBodyListItem(htmlspecialchars($listItem5), '', '', $listItem5);
 
 		$emailTemplate->addBodyText(
-			htmlspecialchars($text2) . '<br><br>' .
-			htmlspecialchars($text3),
-			$text2 . "\n\n" .
-			$text3
+			htmlspecialchars($text2) . '<br><br>'
+			. htmlspecialchars($text3),
+			$text2 . "\n\n"
+			. $text3
 		);
 
 		$emailTemplate->addBodyButton(
@@ -575,16 +575,16 @@ class SubscriptionService {
 		$text5 = $l->t('Your Nextcloud team');
 
 		$emailTemplate->addBodyText(
-			htmlspecialchars($text) . '<br><br>' .
-			htmlspecialchars($text2) . '<br><br>' .
-			htmlspecialchars($text3) . '<br><br>' .
-			htmlspecialchars($text4) . '<br><br>' .
-			htmlspecialchars($text5),
-			$text . "\n\n" .
-			$text2 . "\n\n" .
-			$text3 . "\n\n" .
-			$text4 . "\n\n" .
-			$text5
+			htmlspecialchars($text) . '<br><br>'
+			. htmlspecialchars($text2) . '<br><br>'
+			. htmlspecialchars($text3) . '<br><br>'
+			. htmlspecialchars($text4) . '<br><br>'
+			. htmlspecialchars($text5),
+			$text . "\n\n"
+			. $text2 . "\n\n"
+			. $text3 . "\n\n"
+			. $text4 . "\n\n"
+			. $text5
 		);
 
 		$emailTemplate->addBodyButton(
@@ -627,16 +627,16 @@ class SubscriptionService {
 		$text5 = $l->t('Your Nextcloud team');
 
 		$emailTemplate->addBodyText(
-			htmlspecialchars($text) . '<br><br>' .
-			htmlspecialchars($text2) . '<br><br>' .
-			htmlspecialchars($text3) . '<br><br>' .
-			htmlspecialchars($text4) . '<br><br>' .
-			htmlspecialchars($text5),
-			$text . "\n\n" .
-			$text2 . "\n\n" .
-			$text3 . "\n\n" .
-			$text4 . "\n\n" .
-			$text5
+			htmlspecialchars($text) . '<br><br>'
+			. htmlspecialchars($text2) . '<br><br>'
+			. htmlspecialchars($text3) . '<br><br>'
+			. htmlspecialchars($text4) . '<br><br>'
+			. htmlspecialchars($text5),
+			$text . "\n\n"
+			. $text2 . "\n\n"
+			. $text3 . "\n\n"
+			. $text4 . "\n\n"
+			. $text5
 		);
 
 		$emailTemplate->addBodyButton(
@@ -655,7 +655,6 @@ class SubscriptionService {
 		$message->useTemplate($emailTemplate);
 		$this->mailer->send($message);
 	}
-
 
 	/**
 	 * return details about installed apps

@@ -57,19 +57,16 @@ class Notifier implements INotifier {
 					->setParsedMessage($l->t('Your server has no Nextcloud Subscription or your Subscription has expired.'));
 				$notification->setIcon($this->url->getAbsoluteURL($this->url->imagePath('support', 'notification.svg')));
 				return $notification;
-
 			case 'subscription_over_limit':
 				$notification->setParsedSubject($l->t('Nextcloud Subscription'))
 					->setParsedMessage($l->t('Your Nextcloud server subscription does not cover your number of users.'));
 				$notification->setIcon($this->url->getAbsoluteURL($this->url->imagePath('support', 'notification.svg')));
 				return $notification;
-
 			case 'subscription_expired':
 				$notification->setParsedSubject($l->t('Nextcloud Subscription'))
 					->setParsedMessage($l->t('Your Nextcloud Subscription has expired!'));
 				$notification->setIcon($this->url->getAbsoluteURL($this->url->imagePath('support', 'notification.svg')));
 				return $notification;
-
 			default:
 				// Unknown subject => Unknown notification => throw
 				throw new UnknownNotificationException();

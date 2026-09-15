@@ -135,7 +135,6 @@ class Admin implements IDelegatedSettings {
 			'validSubscription' => ($years + $months + $days) > 0,
 			'overLimit' => $isOverLimit,
 
-
 			'showSubscriptionDetails' => !empty($subscriptionInfo),
 			'showSubscriptionKeyInput' => empty($subscriptionInfo),
 			'showCommunitySupportSection' => $instanceSize === 'small' && empty($subscriptionInfo),
