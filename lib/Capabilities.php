@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace OCA\Support;
 
+use OCA\Support\Service\DesktopClientSettingsService;
 use OCA\Support\Subscription\SubscriptionAdapter;
 use OCP\Capabilities\ICapability;
 use OCP\IConfig;
@@ -16,6 +17,7 @@ class Capabilities implements ICapability {
 	public function __construct(
 		protected readonly SubscriptionAdapter $adapter,
 		protected readonly IConfig $config,
+		protected readonly DesktopClientSettingsService $desktopClientSettings,
 	) {
 	}
 
@@ -23,7 +25,12 @@ class Capabilities implements ICapability {
 	 * @return array{
 	 *   support?: array{
 	 *     hasValidSubscription: bool,
-	 *     desktopEnterpriseChannel: string
+	 *     desktopEnterpriseChannel: string,
+	 *     desktopClient: array{
+	 *       schemaVersion: int,
+	 *       defaults: array<string, bool|int|string>,
+	 *       enforced: array<string, bool|int|string>
+	 *     }
 	 *   },
 	 * }
 	 */
@@ -37,6 +44,7 @@ class Capabilities implements ICapability {
 			'support' => [
 				'hasValidSubscription' => true,
 				'desktopEnterpriseChannel' => $this->config->getSystemValueString('desktopEnterpriseChannel', 'enterprise'),
+				'desktopClient' => $this->desktopClientSettings->getManagedSettings(),
 			],
 		];
 	}
