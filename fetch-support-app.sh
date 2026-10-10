@@ -1,7 +1,8 @@
 #!/bin/bash
 
-# setup strict mode
+# setup bash strict mode
 set -euo pipefail
+IFS=$'\n\t'
 
 NC_RELEASE_URL="https://download.nextcloud.com/server/releases/"
 EXTRACT="nextcloud-.*.tar.bz2"
@@ -34,7 +35,7 @@ function compare_semver_version() {
 }
 
 function git() {
-    command git -c "user.name=Nextcloud" -C ${PATH_TO_SUPPORT} "$@"
+    command git -c "user.name=Nextcloud" -c "user.email=nextcloud@localhost" -C ${PATH_TO_SUPPORT} "$@"
 }
 
 if [ ! -d "${PATH_TO_SUPPORT}" ]; then
@@ -48,19 +49,20 @@ else
     )
 fi
 
-IFS=$'\n'
-for line in $(curl -s ${NC_RELEASE_URL} | grep -E ${EXTRACT}\")
+# fetch outside the for loop so a curl failure aborts the script
+RELEASES=$(curl -fsS --retry 3 ${NC_RELEASE_URL} | grep -E ${EXTRACT}\")
+for line in ${RELEASES}
 do
     RELEASE=$(echo ${line} | sed -E "s/.*($EXTRACT).*/\1/")
     DATE=$(echo ${line} | sed -E "s/.*([0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}).*/\1/")
     NC_VERSION=$(echo ${RELEASE} | sed -E "s/nextcloud-(.*).tar.bz2/\1/")
 
-    # check if the version is greater than the initial version
+    # only process versions greater than the initial version
     if [[ -n $INITIAL_VERSION ]]
     then
         set +e
         compare_semver_version $NC_VERSION $INITIAL_VERSION
-        if [[ $? == 2 ]]
+        if [[ $? != 1 ]]
         then
             set -e
             echo "Skipping ${NC_VERSION}"
@@ -72,7 +74,7 @@ do
     find ${PATH_TO_SUPPORT} -mindepth 1 -maxdepth 1 ! -name '.git' -exec rm -rf {} +
     echo "Downloading ${RELEASE}"
     
-    curl -s ${NC_RELEASE_URL}${RELEASE} | tar -xj --no-same-owner ${PATH_TO_SUPPORT}
+    curl -fsS --retry 3 ${NC_RELEASE_URL}${RELEASE} | tar -xj --no-same-owner ${PATH_TO_SUPPORT}
     rm -rf ${PATH_TO_SUPPORT}/appinfo/signature.json
 
     # run outside [[ ]] so a git failure aborts the script
