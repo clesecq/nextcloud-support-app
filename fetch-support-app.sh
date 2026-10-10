@@ -72,10 +72,12 @@ do
     find ${PATH_TO_SUPPORT} -mindepth 1 -maxdepth 1 ! -name '.git' -exec rm -rf {} +
     echo "Downloading ${RELEASE}"
     
-    curl -s ${NC_RELEASE_URL}${RELEASE} | tar -xj ${PATH_TO_SUPPORT}
+    curl -s ${NC_RELEASE_URL}${RELEASE} | tar -xj --no-same-owner ${PATH_TO_SUPPORT}
     rm -rf ${PATH_TO_SUPPORT}/appinfo/signature.json
 
-    if [[ -n $(git status --porcelain) ]]
+    # run outside [[ ]] so a git failure aborts the script
+    STATUS=$(git status --porcelain)
+    if [[ -n $STATUS ]]
     then
         APP_VERSION=$(
             grep -E "<version>" ${PATH_TO_SUPPORT}/appinfo/info.xml \
