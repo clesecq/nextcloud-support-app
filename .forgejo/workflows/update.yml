@@ -1,0 +1,28 @@
+name: Update support app
+on:
+  schedule:
+    - cron: '0 4 * * *'
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: docker
+    container:
+      image: debian:stable-slim
+    env:
+      GIT_AUTHOR_EMAIL: nextcloud@localhost
+      GIT_COMMITTER_EMAIL: nextcloud@localhost
+    steps:
+      - name: Install deps
+        run: apt-get update && apt-get install -y --no-install-recommends git curl bzip2 ca-certificates
+      - name: Checkout tooling
+        run: |
+          REPO_URL="$(echo '${{ forgejo.server_url }}' | sed 's#://#://oauth2:${{ secrets.PUSH_TOKEN }}@#')/${{ forgejo.repository }}.git"
+          git clone --branch tooling "$REPO_URL" .
+          git clone --branch master "$REPO_URL" nextcloud/apps/support
+      - name: Fetch releases
+        run: bash fetch-support-app.sh
+      - name: Push
+        run: |
+          git -C nextcloud/apps/support push origin master
+          git -C nextcloud/apps/support push --force origin --tags
