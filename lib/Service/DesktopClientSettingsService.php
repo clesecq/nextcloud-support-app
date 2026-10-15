@@ -23,17 +23,18 @@ class DesktopClientSettingsService {
 
 	/**
 	 * Keys the client accepts, with type and whether the server may enforce each.
-	 * Update and proxy keys are default only; only device policy enforces them, so
-	 * a server cannot disable updates or reroute traffic.
+	 * autoUpdateCheck and proxy keys are default only; only device policy enforces
+	 * them, so a server cannot disable updates or reroute traffic. skipUpdateCheck is
+	 * not exposed: it has no user override, so a server value would act as enforcement,
+	 * and the client rejects it.
 	 * Names and types must match the client ManagedSettingsSchema.
 	 */
 	private const ALLOWED = [
-		'skipUpdateCheck' => ['type' => self::TYPE_BOOL, 'enforce' => false],
 		'autoUpdateCheck' => ['type' => self::TYPE_BOOL, 'enforce' => false],
 		'virtualFilesMode' => ['type' => self::TYPE_STRING, 'enforce' => true],
 		'proxyHost' => ['type' => self::TYPE_STRING, 'enforce' => false],
 		'proxyPort' => ['type' => self::TYPE_INT, 'enforce' => false],
-		'proxyType' => ['type' => self::TYPE_STRING, 'enforce' => false],
+		'proxyType' => ['type' => self::TYPE_INT, 'enforce' => false],
 		'newBigFolderSizeLimit' => ['type' => self::TYPE_INT, 'enforce' => true],
 		'confirmExternalStorage' => ['type' => self::TYPE_BOOL, 'enforce' => true],
 		'useNewBigFolderSizeLimit' => ['type' => self::TYPE_BOOL, 'enforce' => true],
